@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<MycroXaml Name="Form"
+  xmlns:wf="System.Windows.Forms, System.Windows.Forms, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
+  xmlns:def="def"
+  xmlns:ref="ref">
+  <wf:Form Text="NLP Comparison" Size="1024, 768" StartPosition="CenterScreen">
+    <wf:Controls>
+      <wf:Label Text="URL:" Location="10, 12" Size="45, 15"/>
+      <wf:TextBox def:Name="tbUrl" Location="55, 10" Size="300, 20" Text="http://en.wikipedia.org/wiki/Computer_science"/>
+      <wf:Button def:Name="btnProcess" Text="Process" Location="360, 7" Size="80, 25" Click="Process"/>
+      <wf:GroupBox Text="AlchemyAPI" Location="10, 40" Size="984, 200">
+        <wf:Controls>
+          <wf:Label def:Name="lblAlchemyEntities" Text="Entities:" Location="20, 20" Size="100, 15"/>
+          <wf:DataGridView def:Name="dgvEntities"
+                 Location="20, 35" Size="300, 150"
+                 AllowUserToAddRows="false"
+                 AllowUserToDeleteRows="false"
+                 ReadOnly="true"
+                 SelectionMode="FullRowSelect"
+                 RowHeadersVisible="False"/>
+          <wf:Label def:Name="lblAlchemyKeywords" Text="Keywords:" Location="340, 20" Size="100, 15"/>
+          <wf:DataGridView def:Name="dgvKeywords"
+                 Location="340, 35" Size="300, 150"
+                 AllowUserToAddRows="false"
+                 AllowUserToDeleteRows="false"
+                 ReadOnly="true"
+                 SelectionMode="FullRowSelect"
+                 RowHeadersVisible="False"/>
+          <wf:Label def:Name="lblAlchemyConcepts" Text="Concepts:" Location="660, 20" Size="100, 15"/>
+          <wf:DataGridView def:Name="dgvConcepts"
+                 Location="660, 35" Size="300, 150"
+                 AllowUserToAddRows="false"
+                 AllowUserToDeleteRows="false"
+                 ReadOnly="true"
+                 SelectionMode="FullRowSelect"
+                 RowHeadersVisible="False"/>
+        </wf:Controls>
+      </wf:GroupBox>
+      <wf:GroupBox Text="OpenCalais" Location="10, 250" Size="984, 200">
+        <Controls>
+          <wf:Label def:Name="lblCalaisEntities" Text="Entities:" Location="20, 20" Size="100, 15"/>
+          <wf:DataGridView def:Name="dgvCalaisEntities"
+                 Location="20, 35" Size="300, 150"
+                 AllowUserToAddRows="false"
+                 AllowUserToDeleteRows="false"
+                 ReadOnly="true"
+                 SelectionMode="FullRowSelect"
+                 RowHeadersVisible="False"/>
+          <wf:Label def:Name="lblCalaisTopics" Text="Topics:" Location="340, 20" Size="100, 15"/>
+          <wf:DataGridView def:Name="dgvCalaisTopics"
+                 Location="340, 35" Size="300, 150"
+                 AllowUserToAddRows="false"
+                 AllowUserToDeleteRows="false"
+                 ReadOnly="true"
+                 SelectionMode="FullRowSelect"
+                 RowHeadersVisible="False"/>
+          <wf:Label def:Name="lblCalaisEvents" Text="Events:" Location="660, 20" Size="100, 15"/>
+          <wf:DataGridView def:Name="dgvCalaisEvents"
+                 Location="660, 35" Size="300, 150"
+                 AllowUserToAddRows="false"
+                 AllowUserToDeleteRows="false"
+                 ReadOnly="true"
+                 SelectionMode="FullRowSelect"
+                 RowHeadersVisible="False"/>
+        </Controls>
+      </wf:GroupBox>
+      <wf:GroupBox Text="Semantria" Location="10, 460" Size="984, 200">
+        <Controls>
+          <wf:Label def:Name="lblSemantriaEntities" Text="Entities:" Location="20, 20" Size="100, 15"/>
+          <wf:DataGridView def:Name="dgvSemantriaEntities"
+                 Location="20, 35" Size="220, 150"
+                 AllowUserToAddRows="false"
+                 AllowUserToDeleteRows="false"
+                 ReadOnly="true"
+                 SelectionMode="FullRowSelect"
+                 RowHeadersVisible="False"/>
+          <wf:Label def:Name="lblSemantriaFacets" Text="Facets:" Location="260, 20" Size="100, 15"/>
+          <wf:DataGridView def:Name="dgvSemantriaFacets"
+                 Location="260, 35" Size="220, 150"
+                 AllowUserToAddRows="false"
+                 AllowUserToDeleteRows="false"
+                 ReadOnly="true"
+                 SelectionMode="FullRowSelect"
+                 RowHeadersVisible="False"/>
+          <wf:Label def:Name="lblSemantriaThemes" Text="Themes:" Location="500, 20" Size="100, 15"/>
+          <wf:DataGridView def:Name="dgvSemantriaThemes"
+                 Location="500, 35" Size="220, 150"
+                 AllowUserToAddRows="false"
+                 AllowUserToDeleteRows="false"
+                 ReadOnly="true"
+                 SelectionMode="FullRowSelect"
+                 RowHeadersVisible="False"/>
+          <wf:Label def:Name="lblSemantriaTopics" Text="Topics:" Location="740, 20" Size="100, 15"/>
+          <wf:DataGridView def:Name="dgvSemantriaTopics"
+                 Location="740, 35" Size="220, 150"
+                 AllowUserToAddRows="false"
+                 AllowUserToDeleteRows="false"
+                 ReadOnly="true"
+                 SelectionMode="FullRowSelect"
+                 RowHeadersVisible="False"/>
+        </Controls>
+      </wf:GroupBox>
+      <wf:StatusBar ShowPanels="true">
+        <wf:Panels>
+          <wf:StatusBarPanel def:Name="sbStatus" BorderStyle="Sunken" AutoSize="Spring"/>
+        </wf:Panels>
+      </wf:StatusBar>
+    </wf:Controls>
+  </wf:Form>
+</MycroXaml>
+
