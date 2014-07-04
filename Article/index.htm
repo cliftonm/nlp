@@ -1,0 +1,441 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Language" content="en-us">
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<title>Comparison of Three Natural Lang</title>
+</head>
+
+<body>
+
+<p>Comparison of Three Natural Language Processors, AlchemyAPI, OpenCalais, and 
+Semantria</p>
+<p><img border="0" src="screenshot-small.png" width="769" height="576"></p>
+<h2>Introduction</h2>
+<p>I've been looking into Natural Language Processors (NLP's) and thought I 
+would share the results of my investigations.&nbsp; We'll look at:</p>
+<ul>
+	<li>Pricing</li>
+	<li>.NET support</li>
+	<li>API call examples</li>
+	<li>NLP results</li>
+</ul>
+<p>I have a particular interest in using NLP's to acquire the semantic content 
+from websites (blogs, news feeds, articles, etc.) and began investing three 
+NLP's (AlchemyAPI, OpenCalais, and 
+Semantria) with regards to price and features.&nbsp; For my particular purposes, 
+I was interested in a low-document volume service that was hopefully free for 
+limited use and that could provide web page content scraping.&nbsp; As I started 
+investigating these three services, it occurred to me that this might be useful 
+information for others as well, and thus this article came into being.</p>
+<p>With regards to my specific requirements (for a different project) the upshot 
+is that only AlchemyAPI and OpenCalais 
+provide the price point (free for my small volume requirements) and only AlchemyAPI provides the webpage scraping functionality natively, 
+as opposed to using a potentially costly third-party package.&nbsp; That said, 
+my requirements are obviously not yours and you should choose a provider 
+accordingly.</p>
+<h3>What is an NLP?&nbsp; </h3>
+<p><i>&quot;Natural language processing (NLP) is a field of computer science, 
+artificial intelligence, and linguistics concerned with the interactions between 
+computers and human (natural) languages. As such, NLP is related to the area of 
+human–computer interaction. Many challenges in NLP involve natural language 
+understanding, that is, enabling computers to derive meaning from human or 
+natural language input, and others involve natural language generation.&quot; </i>(<a href="http://en.wikipedia.org/wiki/Natural_language_processing">wikipedia</a>)</p>
+<h3>Uses for NLP</h3>
+<p>Borrowing from another NLP provider, <a href="http://www.smartlogic.com/">
+Smartlogic</a>, which I have not reviewed here:</p>
+<p><i>&quot;The ability to derive metadata, often in real-time, means that 
+information locked-up in content can be made available alongside Big Data flows. 
+It is this metadata that will help you turn Big Data into smart data for use in 
+decision support.&quot;</i></p>
+<p>and...</p>
+<p><i>&quot;The resulting metadata drives an array of business-critical tasks 
+including:</i></p>
+<ul>
+	<li><i>Semantic user experience for search</i></li>
+	<li><i>Text analytics</i></li>
+	<li><i>Workflow processes driven by meaning</i></li>
+	<li><i>Regulatory compliance involving unstructured content</i></li>
+	<li><i>Automatic classification for Content management</i></li>
+	<li><i>Decision support using information locked-up in content</i></li>
+	<li><i>Knowledge management</i></li>
+	<li><i>Policy application for records management</i></li>
+	<li><i>Content visualization</i></li>
+	<li><i>Content monetization</i></li>
+	<li><i>Improved SEO</i></li>
+	<li><i>Text mining&quot;</i></li>
+</ul>
+<p>I think that says it very well.</p>
+<h3>Documents and Web Content Scraping</h3>
+<p>OpenCalais and Semantria are both document-based 
+NLP's and as such require that that the web page scraping has been performed a 
+priori.&nbsp; While AlchemyAPI uses its own web page scraping technology,&nbsp; Semantria tightly integrates with
+<a href="http://www.diffbot.com/">Diffbot</a> for this service.&nbsp;For the purposes of this demo 
+(since DiffBot offers only a 7 day limited free trial), I 
+will be using AlchemyAPI's <code>URLGetText</code> API method to provide the 
+scraped content for the OpenCalais and Semantria NLP's.</p>
+<pre>/// &lt;summary&gt;
+/// We use AlchemyAPI to get the page text for OpenCalais and Semantria.
+/// &lt;/summary&gt;
+protected string GetPageText(string url)
+{
+  AlchemyWrapper alchemy = new AlchemyWrapper();
+  alchemy.Initialize();
+
+  string xml = alchemy.GetUrlText(url);
+  XmlDocument xdoc = new XmlDocument();
+  xdoc.LoadXml(xml);
+
+  return xdoc.SelectSingleNode(&quot;//text&quot;).InnerText;
+}</pre>
+<p>This way at least, the text being handed to each NLP will be the same.&nbsp; </p>
+<p>If you're not processing content from web pages (blogs, news feeds, articles, 
+etc.) then this is a moot point with regards to OpenCalais and Semantria.</p>
+<p>As a disclaimer, I have no affiliation with these service providers and while I've had 
+excellent contact with people from all three providers, there has been in no way any persuasion to bias this 
+article, though I have coordinated with a couple to ensure that I am presenting 
+their product adequately.&nbsp; </p>
+<h2>The Three Contenders</h2>
+<p>I've reviewed three NLP providers: AlchemyAPI, OpenCalais, and Semantria.&nbsp; 
+They each offer similar services in that they will process text, producing a 
+list of entities and relevance of those entities, along with additional 
+information that is unique to each of them, which I'll explore briefly as well.&nbsp; 
+Let's first visit what each provider has to say about themselves and NLP:</p>
+<h3>AlchemyAPI</h3>
+<p><img border="0" src="alchemy1.png" width="993" height="206"></p>
+<p><a href="http://www.alchemyapi.com/">http://www.alchemyapi.com/</a> </p>
+<p><i>&quot;AlchemyAPI is helping pioneer a computer’s ability to understand human 
+language and vision. Our web services for real-time text analysis and computer 
+vision give you the intelligence needed to transform vast amounts of 
+unstructured data into actions that drive your business.&nbsp; Now you can 
+easily perform sentiment analysis, keyword extraction, entity extraction, image 
+tagging and much more on the massive volumes of web pages, documents, tweets and 
+photos produced every second.&quot;</i></p>
+<p>One of the unique things about AlchemyAPI that I noticed right away is that 
+it performs analysis not just on text but also on images.</p>
+<p>AlchemyAPI supports named entity, keyword, and text extraction for content in 
+the following eight languages:</p>
+<ul>
+	<li>English</li>
+	<li>French</li>
+	<li>German</li>
+	<li>Italian</li>
+	<li>Portuguese</li>
+	<li>Russian</li>
+	<li>Spanish</li>
+	<li>Swedish</li>
+</ul>
+<p>Content sentiment analysis currently supports English and German, with 
+support for additional languages in development.</p>
+<p>To avoid biasing the timing results, I first request the page text using 
+AlchemyAPI and then feed this text into all three NLP's.&nbsp; It should be 
+noted that this produces worse timing for AlchemyAPI than if I had provided the 
+web page URL directly -- meaning that if you give AlchemyAPI the URL, it 
+performs better, and in many cases, significantly better than the other two. 
+It's unfortunate that I have to dumb-down AlchemyAPI to equalize the timing 
+tests with the other two NLP providers.</p>
+<h3>OpenCalais</h3>
+<p><img border="0" src="opencalais1.png" width="988" height="202"></p>
+<p><a href="http://www.opencalais.com/">http://www.opencalais.com/</a> </p>
+<p><i>&quot;We want to make all the world's content more accessible, interoperable 
+and valuable. Some call it Web 2.0, Web 3.0, the Semantic Web or the Giant 
+Global Graph - we call our piece of it Calais.&nbsp; Calais is a rapidly growing 
+toolkit of capabilities that allow you to readily incorporate state-of-the-art 
+semantic functionality within your blog, content management system, website or 
+application.&quot;</i></p>
+<p>OpenCalais supports English, French and Spanish.</p>
+<h3>Semantria</h3>
+<p><img border="0" src="semantria1.png" width="990" height="205"></p>
+<p><a href="https://semantria.com/">https://semantria.com/</a> </p>
+<p><i>&quot;Semantria applies Text and Sentiment Analysis to tweets, facebook posts, 
+surveys, reviews or enterprise content.&nbsp; Semantria is a complete 
+cloud-based text and sentiment analysis solution launched in 2011.&nbsp; Faster 
+than a human (60,000x), more accurate than 2 humans (80% of the time it's flat 
+out smarter), and living in the Amazon cloud, Semantria extracts the meaning, 
+tone, and so much more from any text it’s given.&quot;</i></p>
+<p>One of the interesting things about Semantria is the Excel plugin: <i>&quot;Semantria 
+is the only Text and Sentiment Analysis solution for Excel.&nbsp; It turns it 
+into a powerful and easy-to-use tool for monitoring and visualizing Twitter, 
+Facebook, surveys and other unstructured data.&quot;</i></p>
+<p>Also, Semantria supports these languages:</p>
+<ul>
+	<li>English (US/UK)</li>
+	<li>French (FR/CA)</li>
+	<li>Spanish</li>
+	<li>Portuguese</li>
+	<li>Italian</li>
+	<li>German</li>
+	<li>Mandarin (Traditional and Simplified)</li>
+	<li>Korean</li>
+	<li>Japanese (beta)</li>
+	<li>Malay (Bahasa Melayu)</li>
+	<li>Indonesian (Bahasa Indonesia)</li>
+	<li>Singlish (Singapore Colloquial Language)</li>
+</ul>
+<p>Also, Semantria integrates tightly with <a href="http://www.diffbot.com/">
+Diffbot</a> for webpage scraping.</p>
+<h2>Pricing</h2>
+<p>Pricing varies considerably and is based on number of transactions being 
+processed daily/monthly and level of customer support.</p>
+<h3>AlchemyAPI</h3>
+<p>Five Tiers:</p>
+<p>Free: 1,000 transactions / day, supporting five concurrent requests, no 
+support</p>
+<p>$250/month: 90,000 transactions / month, 5 concurrent requests, email support</p>
+<p>$750/month: 300,000 transactions / month, 15 concurrent requests, email 
+support</p>
+<p>$1750/month: 3,000,000 transactions / month, 25 concurrent requests, email 
+and phone support, uptime guarantee</p>
+<p>Custom for more than 3M transactions.</p>
+<p>For academia, AlchemyAPI offers an increased number of transactions per day 
+in the Free tier.</p>
+<h3>OpenCalais</h3>
+<p>Free: 50,000 transactions per license per day and four transactions per 
+second</p>
+<p>Commercial License: <i>&quot;Our commercial services provide the same 
+functionality as OpenCalais but with a production-strength twist. The service 
+provides a high-performance SLA, a daily transaction limit of 100,000 
+transactions and an enhanced 20 transactions per second rate. Additional volume 
+blocks up to maximum of 2,000,000 transactions per day are available. 
+ProfessionalCalais meets needs unique to larger-scale publishers. 
+ProfessionalCalais is available as an annual contract.&quot;</i></p>
+<h3>Semantria</h3>
+<p>Five Tiers:</p>
+<p>Free Trial: First 10,000 transactions (total, not per month) free, full 
+featured (although see below in the API discussion for issues that I 
+encountered)</p>
+<p>$999/month: Excel Seat, unlimited transactions</p>
+<p>$999/month: API Standard, 100,000 transactions / month, some limits (like 
+number of supported languages)</p>
+<p>$1999/month: API Premium, 1,000,000 transactions / month</p>
+<p>Custom for more than 1M transactions per month</p>
+<p>DiffBbot, which integrates with Semantria for webpage scraping, has its own 
+pricing structure and I am not aware of how that changes the pricing structure. </p>
+<h2>API's</h2>
+<p>Each provider requires that you obtain a product key to interface with the 
+API, which is a simple process.&nbsp; I have not included my keys, so to run the 
+code, you will need to register with each provider to obtain your own API key and place it into the 
+appropriate text file (see the code for filenames.)&nbsp; Because I'm working in 
+C# / .NET, I obtained a .NET library to handle the SOAP/REST calls, either from 
+the provider directly or one that I was referred to by the provider.&nbsp; All 
+API's provided examples and various degrees of unit tests.</p>
+<h3>AlchemyAPI</h3>
+<p>The AlchemyAPI, to put it simply, just worked.&nbsp; It provided the 
+functionality that I was looking for (give it a URL and it returns semantic 
+results) and it worked without any issues, which is something I cannot say for 
+OpenCalais or Semantria.&nbsp; Interfacing with the .NET API that they provide 
+is quite simple, for example:</p>
+<pre>protected AlchemyAPI.AlchemyAPI alchemyObj;
+
+public void Initialize()
+{
+  alchemyObj = new AlchemyAPI.AlchemyAPI();
+  alchemyObj.LoadAPIKey(&quot;alchemyapikey.txt&quot;);
+}
+
+public string GetUrlText(string url)
+{
+  return alchemyObj.URLGetText(url);
+}
+
+public DataSet LoadEntitiesFromUrl(string url)
+{
+  DataSet dsEntities = new DataSet();
+  string xml = alchemyObj.URLGetRankedNamedEntities(url);
+  TextReader tr = new StringReader(xml);
+  XmlReader xr = XmlReader.Create(tr);
+  dsEntities.ReadXml(xr);
+  xr.Close();
+  tr.Close();
+
+  return dsEntities;
+}</pre>
+<p>Unlike OpenCalais and Semantra, I had no issues interfacing with the .NET API 
+library &quot;out of the box.&quot;</p>
+<p>Also, unlike OpenCalais and Semantra, AlchemyAPI returns an XML document 
+rather than data mapped to library classes.</p>
+<h3>OpenCalais</h3>
+<p>The <a href="http://opencalais.codeplex.com/">Open Calais .NET library</a> on 
+Codeplex was the most difficult of the three libraries to work with, requiring me to fix 
+the entity enumerator.&nbsp; The first issue with this library is that, when you 
+unzip it, all the files are read-only.&nbsp; This made it impossible to load 
+the projects and solutions into VS2012 without first changing all the files and 
+folders to read-write.</p>
+<p>Second, using their sample document, I was getting 
+&quot;Unhandled Exception: System.ArgumentException: Requested value 'PoliticalEvent' 
+was not found.&quot; because there were missing types in the <code>CalaisSimpleEntityType</code> 
+enumerator:</p>
+<pre>// Ignore topics and events are they are processed seperately
+if (elementName != &quot;Topics&quot; &amp;&amp; elementName != &quot;Event&quot; &amp;&amp; elementName != &quot;Topic&quot;)
+{
+  newSimpleEntity.Type = (CalaisSimpleEntityType)Enum.Parse(typeof(CalaisSimpleEntityType), result.Name.ToString());
+  yield return newSimpleEntity;
+}</pre>
+
+<p>To fix this, I had to go in and change this class:</p>
+<pre>public class CalaisSimpleEntity
+{
+  public string Value { get; set; }
+  public int Frequency { get; set; }
+  public string Relevance { get; set; }
+  public CalaisSimpleEntityType Type { get; set; }
+}</pre>
+<p>so that Type was a string (why it's mapped to an enumeration is beyond me):</p>
+<pre>public class CalaisSimpleEntity
+{
+  public string Value { get; set; }
+  public int Frequency { get; set; }
+  public string Relevance { get; set; }
+  public string Type { get; set; }
+}</pre>
+<p>and the offending line of code:</p>
+<pre>newSimpleEntity.Type = result.Name.ToString();</pre>
+<p>I also had to fix a unit test that failed to compile as the result of the 
+type change.</p>
+<p>I also found it annoying that the properties for Entities, Topics, and Events are 
+IEnumerable's, meaning you have to explicitly iterate through the collection to 
+acquire the contents, which, underlying, involves some processing of the XML document.&nbsp; This 
+is very inefficient, especially if the collection is iterated over many times by 
+different functions, 
+but can be worked around by converting the collections to lists, as I did in the 
+simple &quot;get&quot; functions, for example:</p>
+<pre>return document.Entities.ToList();</pre>
+<p>Given that the contents of these collections is unchanging, I see no reason 
+not to pre-populate the collections with their items.</p>
+<p>My other significant issue with OpenCalais is that my sample document (the 
+text of Wikipedia's page on Computer Science) resulted in a &quot;content is not 
+valid&quot; exception from the server.&nbsp; It turns out that the offending sentence 
+is this:</p>
+<p><i>The term is used mainly in the Scandinavian countries. Also, in the early 
+days of computing, a number of terms for the practitioners of the field of 
+computing were suggested in the Communications of the ACM – turingineer, 
+turologist, flow-charts-man, applied meta-mathematician, and applied 
+epistemologist.[34] </i><br>
+<br>
+and can be further reduced to the use of the &quot;–&quot; character -- the Unicode 
+character 0x2013 &quot;EN DASH&quot;.&nbsp; OpenCalais is apparently rather sensitive, but 
+we can strip Unicode:</p>
+<pre>// A couple options: http://stackoverflow.com/questions/123336/how-can-you-strip-non-ascii-characters-from-a-string-in-c
+string asAscii = Encoding.ASCII.GetString(
+  Encoding.Convert(
+    Encoding.UTF8,
+    Encoding.GetEncoding(
+        Encoding.ASCII.EncodingName,
+        new EncoderReplacementFallback(string.Empty),
+        new DecoderExceptionFallback()
+    ),
+    Encoding.UTF8.GetBytes(content)
+  )
+); </pre>
+<p>Once properly sanitized, the actual call to parse the document and extract 
+data is very simple:</p>
+<pre>CalaisDotNet calais = new CalaisDotNet(apikey, asAscii);
+document = calais.Call&lt;CalaisSimpleDocument&gt;();
+
+...
+
+public IList GetEntities()
+{
+  return document.Entities.ToList();
+}</pre>
+<p>Lastly, I found that OpenCalais is by far the slowest of the parsers.</p>
+<h3>Semantria</h3>
+<p>Semantria's .NET API is a bit awkward to work with.&nbsp; With my scraped 
+webpage content string, I was getting 
+&quot;line too long&quot; exceptions and, perusing the sample code, discovered that text 
+needs to be broken up into separate lines:</p>
+<pre>/// &lt;summary&gt;
+/// The content needs to be split into small chunks, otherwise an exception is thrown (line too long.)
+/// &lt;/summary&gt;
+protected Collection SplitContent(string content)
+{
+  Collection collection = new Collection() { Id = Guid.NewGuid().ToString(), Documents = new List&lt;string&gt;() };
+
+  content.Split('\n').ForEach(s =&gt;
+  {
+    string trimmed = s.Trim();
+
+    // Ignore empty lines.
+    if (!String.IsNullOrEmpty(trimmed))
+    {
+      collection.Documents.Add(trimmed);
+    }
+  });
+
+  return collection;
+}</pre>
+<p>Once this was accomplished, calling the parser was straight-forward:</p>
+<pre>public void ParseUrl(string url)
+{
+  // We need to get the content ourselves.
+  string content = Program.GetContentFromUrl(url);
+  Collection collection = SplitContent(content);
+
+  int queueRet = session.QueueCollection(collection); // if ret != -1 then the document has been queued.
+
+  do
+  {
+    Thread.Sleep(1000); // wait some arbitrary time for results to appear.
+    // TODO: Is there a notification callback when the processing is done or do we need to implement it ourselves by wrapping this in an awaitable task?
+    result = session.GetCollection(collection.Id);
+  } while (result.Status == Semantria.Com.TaskStatus.QUEUED);
+
+  Assert.That(result.Status == Semantria.Com.TaskStatus.PROCESSED, &quot;Failure to process content.&quot;);
+}</pre>
+<p>The call is also awkward -- note the <code>Thread.Sleep(1000)</code> as we await a 
+response from the server.&nbsp; Since the call to <code>GetCollection</code> returns 
+immediately, it would have been useful if the API provided some notification 
+mechanism.</p>
+<p>Also, I only discovered in discussions with the nice folks at Semantria 
+that there are default limits on the number of entities, facets, themes, and 
+topics returned by the parser (5, 15, 5, and 10 respectively.)&nbsp; The trial 
+version says it is full-featured on the website, but according to Semantria &quot;The 
+reason why you got only 5 entities ...is because default limit for each trial 
+account is max 5 entities per document.&quot;&nbsp; Apparently this can be 
+changed, to a maximum of 20:</p>
+<pre>protected void IncreaseLimits()
+{
+  List&lt;Configuration&gt; configurations = session.GetConfigurations();
+  Configuration config = configurations.FirstOrDefault(item =&gt; item.Language.Equals(&quot;English&quot;));
+
+  if (config != null)
+  {
+    config.Document.NamedEntitiesLimit = 20;
+    config.Document.ConceptTopicsLimit = 20;
+    config.Document.EntityThemesLimit = 20;
+    session.UpdateConfigurations(new List&lt;Configuration&gt;() { config });
+  }
+}</pre>
+<p>However, this had no effect on the results.</p>
+<h2>A Couple Sample Runs</h2>
+<p>Here's a couple sample runs that I've made to very roughly compare the 
+results of the three NLP services.</p>
+<h3>Wikipedia's Computer Science Page</h3>
+<p>Here's the results from parsing
+<a href="http://en.wikipedia.org/wiki/Computer_science">
+http://en.wikipedia.org/wiki/Computer_science</a> </p>
+<h3>A Randomly Selection Code Project Article</h3>
+<p>Here's the results from parsing this article: 
+<a href="http://www.codeproject.com/Articles/334310/Understanding-ASP-NET-Validation-Techniques">
+http://www.codeproject.com/Articles/334310/Understanding-ASP-NET-Validation-Techniques</a> </p>
+<h2>Conclusions</h2>
+<p>While I had originally set out with the goal of not drawing any conclusions 
+about the three providers and rather to simply present my findings, I have 
+definitely become biased towards AlchemyAPI as a result of having to fix API 
+problems in OpenCalais, perform convoluted conversion of input data to keep 
+Semantria happy with line lengths, and lastly, ending up utilizing AlchemyAPI to 
+retrieve the text for OpenCalais and Semantria to parse. </p>
+<p>The testing here is not exhaustive--some may argue not even comprehensive.&nbsp; 
+I am testing high throughputs.&nbsp; I also haven't simulated customer service 
+issues.&nbsp; All three providers replied very quickly when I emailed them that 
+I was writing this article, and I've had excellent and helpful conversations 
+with all of them.</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+</body>
+
+</html>

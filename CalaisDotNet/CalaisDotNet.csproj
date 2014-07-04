@@ -1,0 +1,91 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{86341C0E-00D8-4948-A43C-10AB5F4AC63B}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Calais</RootNamespace>
+    <AssemblyName>CalaisDotNet</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Documents\CalaisJsonDocument.cs" />
+    <Compile Include="Entities\CalaisSimpleTopic.cs" />
+    <Compile Include="Enums\CalaisOutputFormat.cs" />
+    <Compile Include="CalaisDotNet.cs" />
+    <Compile Include="Documents\CalaisMicroFormatsDocument.cs" />
+    <Compile Include="Documents\CalaisRdfDocument.cs" />
+    <Compile Include="Documents\CalaisRdfDocumentDescription.cs" />
+    <Compile Include="Entities\CalaisRdfEntity.cs" />
+    <Compile Include="Enums\CalaisInputFormat.cs" />
+    <Compile Include="Enums\CalaisRdfEntitySubType.cs" />
+    <Compile Include="Enums\CalaisRdfEntityType.cs" />
+    <Compile Include="Entities\CalaisRdfResourceInstance.cs" />
+    <Compile Include="Entities\CalaisRdfRelationship.cs" />
+    <Compile Include="Enums\CalaisRdfRelationshipType.cs" />
+    <Compile Include="Documents\CalaisSimpleDocument.cs" />
+    <Compile Include="Entities\CalaisSimpleEntity.cs" />
+    <Compile Include="Documents\CalaisSimpleDocumentDescription.cs" />
+    <Compile Include="Enums\CalaisSimpleEntityType.cs" />
+    <Compile Include="Enums\CalaisSimpleEventType.cs" />
+    <Compile Include="Interfaces\ICalaisDocument.cs" />
+    <Compile Include="Interfaces\ICalaisRdfEntity.cs" />
+    <Compile Include="Helpers\ObjectFactory.cs" />
+    <Compile Include="Helpers\Predicates.cs" />
+    <Compile Include="Helpers\StringLibrary.cs" />
+    <Compile Include="WebService\CalaisServiceProxy.cs" />
+    <Compile Include="Helpers\Enum.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Helpers\StringEnum.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
