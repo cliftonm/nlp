@@ -20,7 +20,10 @@ would share the results of my investigations.&nbsp; We'll look at:</p>
 	<li>API call examples</li>
 	<li>NLP results</li>
 </ul>
-<p>I have a particular interest in using NLP's to acquire the semantic content 
+<p>I've reviewed three NLP providers: AlchemyAPI, OpenCalais, and Semantria.&nbsp; 
+They each offer similar services in that they will process text, producing a 
+list of entities and relevance of those entities, along with additional 
+information that is unique to each of them, which I'll explore briefly as well.&nbsp; I have a particular interest in using NLP's to acquire the semantic content 
 from websites (blogs, news feeds, articles, etc.) and began investing three 
 NLP's (AlchemyAPI, OpenCalais, and 
 Semantria) with regards to price and features.&nbsp; For my particular purposes, 
@@ -148,7 +151,7 @@ https://semantria.com/features/entity-extraction</a>.)</p>
 	this is the count of sentiment (negative, neutral, or positive) in the text 
 	for a particular entity.</li>
 </ul>
-<h3>Other Semantic Types</h3>
+<h3>Other Semantic Information</h3>
 <p>In addition, each provides several additional categories of parsing.&nbsp; Be 
 aware that the names of these categories and their attributes is derived from 
 the API names.</p>
@@ -215,13 +218,12 @@ the API names.</p>
 	</li>
 </ul>
 <h2>The Three Contenders</h2>
-<p>I've reviewed three NLP providers: AlchemyAPI, OpenCalais, and Semantria.&nbsp; 
-They each offer similar services in that they will process text, producing a 
-list of entities and relevance of those entities, along with additional 
-information that is unique to each of them, which I'll explore briefly as well.&nbsp; 
-Let's first visit what each provider has to say about themselves and NLP:</p>
+<p>We'll look shortly at what each of the three providers has to say about 
+themselves.&nbsp; First however, I'd like to talk a little about document 
+processing and web content scraping.</p>
 <h3>Documents and Web Content Scraping</h3>
-<p>OpenCalais and Semantria are both document-based 
+<p>All three providers can work with text documents, however only AlchemyAPI 
+provides web content scraping directly as part of the API.&nbsp; OpenCalais and Semantria are both document-based 
 NLP's and as such require that that the web page scraping has been performed a 
 priori.&nbsp; While AlchemyAPI uses its own web page scraping technology,&nbsp; Semantria tightly integrates with
 <a href="http://www.diffbot.com/">Diffbot</a> for this service.&nbsp;For the purposes of this demo 
@@ -242,13 +244,8 @@ protected string GetPageText(string url)
 
   return xdoc.SelectSingleNode(&quot;//text&quot;).InnerText;
 }</pre>
-<p>This way at least, the text being handed to each NLP will be the same.&nbsp; </p>
-<p>If you're not processing content from web pages (blogs, news feeds, articles, 
-etc.) then this is a moot point with regards to OpenCalais and Semantria.</p>
-<p>As a disclaimer, I have no affiliation with these service providers and while I've had 
-excellent contact with people from all three providers, there has been in no way any persuasion to bias this 
-article, though I have coordinated with a couple to ensure that I am presenting 
-their product adequately.&nbsp; </p>
+<p>This way at least, the text being handed to each NLP will be the same.&nbsp; If you're not processing content from web pages (blogs, news feeds, articles, 
+etc.) then this is a moot point with regards to OpenCalais and Semantria.&nbsp; </p>
 <h3>AlchemyAPI</h3>
 <p><img border="0" src="alchemy1.png" width="993" height="206"></p>
 <p><a href="http://www.alchemyapi.com/">http://www.alchemyapi.com/</a> </p>
@@ -555,9 +552,10 @@ changed, to a maximum of 20:</p>
   }
 }</pre>
 <p>However, this had no effect on the results.</p>
-<h2>A Couple Sample Runs</h2>
-<p>Here's a couple sample runs that I've made to very roughly compare the 
-results of the three NLP services.&nbsp; The code that does the processing runs 
+<h2>A Sample Run</h2>
+<p>The screenshots that I've been using come from parsing this page:
+<a href="http://en.wikipedia.org/wiki/Computer_science">
+http://en.wikipedia.org/wiki/Computer_science</a>.&nbsp; The code that does the processing runs 
 each service request asynchronously, marshalling the UI data grid updates back 
 onto the UI thread (not shown):</p>
 <pre>/// &lt;summary&gt;
@@ -609,21 +607,38 @@ protected async void Process(object sender, EventArgs args)
 }</pre>
 <p>This way, the UI remains responsive and you can interact with it while other 
 results are still coming in.</p>
-<h3>Wikipedia's Computer Science Page</h3>
-<p>Here's the results from parsing
-<a href="http://en.wikipedia.org/wiki/Computer_science">
-http://en.wikipedia.org/wiki/Computer_science</a> </p>
-<h3>A Randomly Selection Code Project Article</h3>
-<p>Here's the results from parsing this article: 
-<a href="http://www.codeproject.com/Articles/334310/Understanding-ASP-NET-Validation-Techniques">
-http://www.codeproject.com/Articles/334310/Understanding-ASP-NET-Validation-Techniques</a> </p>
+<h3>Strange Behaviors</h3>
+<p>It would seem that AlchemyAPI has a limit of 50 entities.&nbsp; Semantria has 
+stated to me (and it's somewhere on the website, but not obvious) that the 
+default entity limit is 5.&nbsp; OpenCalais apparently does not limit entities, 
+as it returns 155 results.</p>
+<p>Oddly thought, AlchemyAPI reports a count of 6 occurances of &quot;Charles 
+Babbage&quot;, Open Calais reports a frequency of 13, and yet the actual count of 
+occurances in the document is 4!</p>
+<p>Similarly, for Blaise Pascal, the counts / frequency are:</p>
+<ul>
+	<li>Alchemy API: 3</li>
+	<li>OpenCalais: 4 (frequency)</li>
+	<li>Semantria: 2</li>
+	<li>Actual count in the document: 2</li>
+</ul>
+<p>It's quite the puzzler as to why there is over-reporting of the count of 
+entities in AlchemyAPI and OpenCalais, and this is disturbing as the count might 
+be used for statistcal purposes.</p>
+<p>Conversely, if we look for occurrences of &quot;IBM&quot; in the text and compare the 
+results to the actual count in the scraped document:</p>
+<ul>
+	<li>Alchemy API: not reported</li>
+	<li>OpenCalais: 8 (frequency)</li>
+	<li>Semantria: 3</li>
+	<li>Actual count in the document: 8</li>
+</ul>
+<p>As with Semantria with a default limit of 5 entities, it would appear that 
+IBM was dropped out as a result of the AlchemyAPI's 50 entity limit.&nbsp; 
+Again, this is seriously disturbing because these limits are not described 
+anywhere (or at least not anywhere obvious) on the respective web pages.&nbsp; 
+It appears only OpenCalais has a reasonably comprehensive list of entities, </p>
 <h2>Conclusions</h2>
-<p>While I had originally set out with the goal of not drawing any conclusions 
-about the three providers and rather to simply present my findings, I have 
-definitely become biased towards AlchemyAPI as a result of having to fix API 
-problems in OpenCalais, perform convoluted conversion of input data to keep 
-Semantria happy with line lengths, and lastly, ending up utilizing AlchemyAPI to 
-retrieve the text for OpenCalais and Semantria to parse. </p>
 <p>The testing here is not exhaustive--some may argue not even comprehensive.&nbsp; 
 I am testing high throughputs.&nbsp; I also haven't simulated customer service 
 issues.&nbsp; All three providers replied very quickly when I emailed them that 
@@ -633,6 +648,24 @@ with all of them.</p>
 define what the various terms mean in their API's and the collection attributes.&nbsp; 
 If one is to use these services for serious analysis of documents, an exact 
 meaning is a requirement.</p>
+<p>Additionally, as mentioned earlier, it is disturbing that the counts / 
+frequency reported by all three providers is often incorrect.&nbsp; Furthermore, 
+AlchemyAPI and Semantria have limits to the number of entities returned, which, 
+for semantic analysis, results in missing data.&nbsp; I find this very 
+disturbing when considering that I want a comprehensive list of entities for the 
+project that I have in mind.&nbsp; </p>
+<p>While I had originally set out with the goal of not drawing any conclusions 
+about the three providers and rather to simply present my findings, I have 
+definitely become biased towards AlchemyAPI as a result of having to fix API 
+problems in OpenCalais, perform convoluted conversion of input data to keep 
+Semantria happy with line lengths, and lastly, ending up utilizing AlchemyAPI to 
+retrieve the text for OpenCalais and Semantria to parse.&nbsp; However, the 
+limits imposed by AlchemyAPI suggest that I would rather use Semantria's web 
+page scraper and feed the resulting document into OpenCalais to get a 
+comprehensive list of entities.&nbsp; Semantria is not a viable candidate 
+because of the pricing (I do not have $1000 a month to throw at a service for 
+what is essentially an open source project demonstration--a completely different 
+article.)</p>
 <p>Lastly, I feel as though I owe an apology to the reader -- this review has 
 taken a considerable amount of time and I have glossed over (or outright 
 skipped) many of the features of these providers.&nbsp; While this article 

@@ -134,6 +134,8 @@ namespace NlpComparison
 				{
 					return GetPageText(url);
 				});
+
+			// File.WriteAllText("c:\\temp\\pagetext.txt", pageText);
 			
 			sbStatus.Text = "Processing results with Alchemy...";
 
