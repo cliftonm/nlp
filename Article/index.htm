@@ -177,7 +177,7 @@ the API names.</p>
 <p><u>OpenCalais</u></p>
 <ul>
 	<li>Topics (aka facts, as is appears on the web pages.)<ul>
-		<li>&nbsp;attributes of Topics are Value, SCore, and Taxonomy (so far 
+		<li>&nbsp;attributes of Topics are Value, Score, and Taxonomy (so far 
 		I've only seen &quot;Calais&quot; for taxonomy.)</li>
 	</ul>
 	</li>
@@ -555,7 +555,9 @@ changed, to a maximum of 20:</p>
 <h2>A Sample Run</h2>
 <p>The screenshots that I've been using come from parsing this page:
 <a href="http://en.wikipedia.org/wiki/Computer_science">
-http://en.wikipedia.org/wiki/Computer_science</a>.&nbsp; The code that does the processing runs 
+http://en.wikipedia.org/wiki/Computer_science</a>.&nbsp; You can of course enter 
+your own URL in the demo application (try a Code Project article, the results 
+are often interesting.)&nbsp; The code that does the processing runs 
 each service request asynchronously, marshalling the UI data grid updates back 
 onto the UI thread (not shown):</p>
 <pre>/// &lt;summary&gt;
