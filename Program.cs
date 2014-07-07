@@ -18,8 +18,10 @@ namespace NlpComparison
 {
     public class Program
     {
+		protected Form form;
 		protected TextBox tbUrl;
 		protected StatusBarPanel sbStatus;
+		protected Button btnProcess;
 
 		// AlchemyAPI views and grids:
 		protected DataView dvEntities;
@@ -72,11 +74,12 @@ namespace NlpComparison
 			XmlDocument doc = new XmlDocument();
 			doc.Load("MainForm.xml");
 			mp.Load(doc, "Form", this);
-			Form form = (Form)mp.Process();
+			form = (Form)mp.Process();
 
 			// Controls we need to use:
 			tbUrl = mp.ObjectCollection["tbUrl"] as TextBox;
 			sbStatus = mp.ObjectCollection["sbStatus"] as StatusBarPanel;
+			btnProcess = mp.ObjectCollection["btnProcess"] as Button;
 
 			// AlchemyAPI grids:
 			dgvEntities = (DataGridView)mp.ObjectCollection["dgvEntities"];
@@ -120,34 +123,49 @@ namespace NlpComparison
 		/// <summary>
 		/// Process the URL with AlchemyAPI, OpenCalais, and Semantra NLP's.
 		/// </summary>
-		protected void Process(object sender, EventArgs args)
+		protected async void Process(object sender, EventArgs args)
 		{
+			btnProcess.Enabled = false;
 			ClearAllGrids();
-			Application.DoEvents();
-
 			string url = tbUrl.Text;
 			sbStatus.Text = "Acquiring page content...";
-			string pageText = GetPageText(url);
+
+			string pageText = await Task.Run(() =>
+				{
+					return GetPageText(url);
+				});
 			
 			sbStatus.Text = "Processing results with Alchemy...";
-			StartTimer();
-			LoadAlchemyResults(pageText);
-			double alchemyTime = StopTimer();
-			Application.DoEvents();
 
-			StartTimer();
+			double alchemyTime = await Task.Run(() =>
+				{
+					StartTimer();
+					LoadAlchemyResults(pageText);
+					return StopTimer();
+				});
+
 			sbStatus.Text = "Processing results with OpenCalais...";
-			LoadCalaisResults(pageText);
-			double calaisTime = StopTimer();
-			Application.DoEvents();
 
-			StartTimer();
+			double calaisTime = await Task.Run(() =>
+				{
+					StartTimer();
+					LoadCalaisResults(pageText);
+					return StopTimer();
+				});
+
 			sbStatus.Text = "Processing results with Semantria...";
-			LoadSemantriaResults(pageText);
-			double semantriaTime = StopTimer();
+
+			double semantriaTime = await Task.Run(() =>
+				{
+					StartTimer();
+					LoadSemantriaResults(pageText);
+					return StopTimer();
+				});
+
 			sbStatus.Text = "Done processing.";
 
 			ReportTimes(alchemyTime, calaisTime, semantriaTime);
+			btnProcess.Enabled = true;
 		}
 
 		protected void ClearAllGrids()
@@ -215,18 +233,21 @@ namespace NlpComparison
 				DataSet dsKeywords = alchemy.LoadKeywords(text);
 				DataSet dsConcepts = alchemy.LoadConcepts(text);
 
-				dvEntities = new DataView(dsEntities.Tables["entity"]);
-				dgvEntities.DataSource = dvEntities;
+				form.BeginInvoke((Action)(() =>
+					{
+						dvEntities = new DataView(dsEntities.Tables["entity"]);
+						dgvEntities.DataSource = dvEntities;
 
-				dvKeywords = new DataView(dsKeywords.Tables["keyword"]);
-				dgvKeywords.DataSource = dvKeywords;
+						dvKeywords = new DataView(dsKeywords.Tables["keyword"]);
+						dgvKeywords.DataSource = dvKeywords;
 
-				dvConcepts = new DataView(dsConcepts.Tables["concept"]);
-				dgvConcepts.DataSource = dvConcepts;
+						dvConcepts = new DataView(dsConcepts.Tables["concept"]);
+						dgvConcepts.DataSource = dvConcepts;
 
-				lblAlchemyEntities.Text = String.Format("Entities: {0}", dvEntities.Count);
-				lblAlchemyKeywords.Text = String.Format("Keywords: {0}", dvKeywords.Count);
-				lblAlchemyConcepts.Text = String.Format("Concepts: {0}", dvConcepts.Count);
+						lblAlchemyEntities.Text = String.Format("Entities: {0}", dvEntities.Count);
+						lblAlchemyKeywords.Text = String.Format("Keywords: {0}", dvKeywords.Count);
+						lblAlchemyConcepts.Text = String.Format("Concepts: {0}", dvConcepts.Count);
+					}));
 			}
 			catch (Exception ex)
 			{
@@ -244,13 +265,17 @@ namespace NlpComparison
 				CalaisWrapper calais = new CalaisWrapper();
 				calais.Initialize();
 				calais.ParseUrl(text);
-				dgvCalaisEntities.DataSource = calais.GetEntities();
-				dgvCalaisTopics.DataSource = calais.GetTopics();
-				dgvCalaisEvents.DataSource = calais.GetEvents();
 
-				lblCalaisEntities.Text = String.Format("Entities: {0}", ((IList)dgvCalaisEntities.DataSource).Count);
-				lblCalaisTopics.Text = String.Format("Topics: {0}", ((IList)dgvCalaisTopics.DataSource).Count);
-				lblCalaisEvents.Text = String.Format("Events: {0}", ((IList)dgvCalaisEvents.DataSource).Count);
+				form.BeginInvoke((Action)(() =>
+					{
+						dgvCalaisEntities.DataSource = calais.GetEntities();
+						dgvCalaisTopics.DataSource = calais.GetTopics();
+						dgvCalaisEvents.DataSource = calais.GetEvents();
+
+						lblCalaisEntities.Text = String.Format("Entities: {0}", ((IList)dgvCalaisEntities.DataSource).Count);
+						lblCalaisTopics.Text = String.Format("Topics: {0}", ((IList)dgvCalaisTopics.DataSource).Count);
+						lblCalaisEvents.Text = String.Format("Events: {0}", ((IList)dgvCalaisEvents.DataSource).Count);
+					}));
 			}
 			catch (Exception ex)
 			{
@@ -268,15 +293,19 @@ namespace NlpComparison
 				SemantriaWrapper semantria = new SemantriaWrapper();
 				semantria.Initialize();
 				semantria.ParseUrl(text);
-				dgvSemantriaEntities.DataSource = semantria.GetEntities();
-				dgvSemantriaFacets.DataSource = semantria.GetFacets();
-				dgvSemantriaThemes.DataSource = semantria.GetThemes();
-				dgvSemantriaTopics.DataSource = semantria.GetTopics();
 
-				lblSemantriaEntities.Text = String.Format("Entities: {0}", ((IList)dgvSemantriaEntities.DataSource).Count);
-				lblSemantriaFacets.Text = String.Format("Facets: {0}", ((IList)dgvSemantriaFacets.DataSource).Count);
-				lblSemantriaThemes.Text = String.Format("Themes: {0}", ((IList)dgvSemantriaThemes.DataSource).Count);
-				lblSemantriaTopics.Text = String.Format("Topics: {0}", ((IList)dgvSemantriaTopics.DataSource).Count);
+				form.BeginInvoke((Action)(() =>
+					{
+						dgvSemantriaEntities.DataSource = semantria.GetEntities();
+						dgvSemantriaFacets.DataSource = semantria.GetFacets();
+						dgvSemantriaThemes.DataSource = semantria.GetThemes();
+						dgvSemantriaTopics.DataSource = semantria.GetTopics();
+
+						lblSemantriaEntities.Text = String.Format("Entities: {0}", ((IList)dgvSemantriaEntities.DataSource).Count);
+						lblSemantriaFacets.Text = String.Format("Facets: {0}", ((IList)dgvSemantriaFacets.DataSource).Count);
+						lblSemantriaThemes.Text = String.Format("Themes: {0}", ((IList)dgvSemantriaThemes.DataSource).Count);
+						lblSemantriaTopics.Text = String.Format("Topics: {0}", ((IList)dgvSemantriaTopics.DataSource).Count);
+					}));
 			}
 			catch (Exception ex)
 			{

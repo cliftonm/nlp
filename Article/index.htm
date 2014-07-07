@@ -66,6 +66,160 @@ including:</i></p>
 	<li><i>Text mining&quot;</i></li>
 </ul>
 <p>I think that says it very well.</p>
+<h2>But What Does an NLP Actually Do?</h2>
+<p>Each of the three NLP services that I review here parse text and determine 
+something called &quot;entities.&quot;&nbsp; While each of the services gives some 
+examples of entities, only Semantria provides a clear definition of what an 
+entity is: <i>&quot;Semantria’s Named Entity Extraction (NER) feature automatically 
+pulls proper nouns from text, such as people, places, companies, brands, job 
+titles and more. Each extracted named entity is classified, tagged and assigned 
+a sentiment score, which gives meaning and context to each entity.&quot;</i> (<a href="https://semantria.com/features/entity-extraction">https://semantria.com/features/entity-extraction</a>)
+</p>
+<p>In other words, the primary purpose of an NLP is to extract the nouns, 
+determine their types, and provide some &quot;scoring&quot; (relevance or sentiment) of 
+the entity within the text.&nbsp; Using relevance, one can supposedly filter out 
+entities to those that are most relevant in the document.&nbsp; Using sentiment 
+analysis, one can determine the overall sentiment of an entity in the document, 
+useful for determining the &quot;tone&quot; of the document with regards to an entity -- 
+for example, is the entity &quot;sovereign debt&quot; described negatively, neutrally, or 
+positively in the document?</p>
+<p>According to the OpenCalais documentation: <i>&quot;Entity relevance scores are 
+comparable across input texts. This means that you can use entity relevance 
+scores in order to determine entity relevance at a collection level, not just at 
+a document level.&quot; </i>(<a href="http://www.opencalais.com/documentation/calais-web-service-api/api-metadata/entity-relevance-score">http://www.opencalais.com/documentation/calais-web-service-api/api-metadata/entity-relevance-score</a>) 
+If this meaning can be applied to the other providers, it is a useful value for 
+comparing against other documents, but without a definitive meaning of the term 
+&quot;relevance&quot;, I'm not sure what the results of such a comparison actually mean.</p>
+<h3>Entity Extraction</h3>
+<p>Entities are things, often typed, by the NLP, such as people, companies, 
+organizations, cities, geographic features, and so forth.&nbsp; In edition to 
+the extraction of the entity, each service provides additional information about 
+the entity, usually a relevance or sentiment.</p>
+<h4>AlchemyAPI Entity</h4>
+<p>AlchemyAPI's entity has several attributes:</p>
+<ul>
+	<li>Type - the type of entity</li>
+	<li>Relevance - its relevance (whatever that means) on a scale from 0 to 1</li>
+	<li>Count - the number of times the entity occurs in the document</li>
+	<li>Text - the entity name</li>
+</ul>
+<p>There is definitive description of these attributes.&nbsp; Also, sentiment 
+analysis is turned off by default, as it incurs an additional transaction count 
+against one's daily/monthly allowance.</p>
+<p>AlchemyAPI also supports the concept of &quot;linked data&quot;.&nbsp; <i>&quot;Linked Data 
+is a method of exposing, sharing, and connecting data on the Web via 
+dereferenceable URIs. Linked Data aims to extend the Web with a data commons by 
+publishing various open datasets as RDF on the Web and by setting RDF links 
+between data items from different data sources. The Linked Data cloud currently 
+consists of over 7.4 billion RDF triples, interlinked by 142+ million RDF 
+links.&quot; </i>(<a href="http://www.alchemyapi.com/api/linked-data-support/">http://www.alchemyapi.com/api/linked-data-support/</a>.)&nbsp; 
+Linked data is partially demonstrated in Concepts (see below) in the 
+demonstration program.&nbsp; Currently, Alchemy draws on several linked data 
+resources (see the link above as well as <a href="http://linkeddata.org/.">
+http://linkeddata.org/</a>.) </p>
+<h4>OpenCalais Entity</h4>
+<p>An OpenCalais entity has several attributes:</p>
+<ul>
+	<li>Value - the entity name</li>
+	<li>Frequency - possibly the count of occurances, though this conflicts 
+	dramatically with AlchemyAPI's &quot;Count&quot;</li>
+	<li>Relevance - its relevance (again, whatever that actually means) on a 
+	scale from 0 to 1</li>
+	<li>Type - the entity type.</li>
+</ul>
+<p>OpenCalais supports linking entities to DBpedia, Wikipedia, Freebase, 
+Reuters.com, GeoNames, Shopping.com, IMDB, LinkedMDB.&nbsp; This feature is not 
+demonstrated in the demo code.&nbsp; See also&nbsp;
+<a href="http://linkeddata.org/.">http://linkeddata.org/</a>.)</p>
+<h4>Semantria's Entity</h4>
+<p>Semantria's entity has several attributes (which basically conflicts with the 
+documentation on their web page
+<a href="https://semantria.com/features/entity-extraction">
+https://semantria.com/features/entity-extraction</a>.)</p>
+<ul>
+	<li>Label - this attribute contains some arbitrary information about the 
+	entity, perhaps further specifying its type, such as the entity &quot;IBM&quot; has 
+	the label &quot;Company&quot; whereas the entity &quot;United States&quot; has the label 
+	&quot;Place&quot;.</li>
+	<li>Type - seems to always be &quot;named&quot;</li>
+	<li>Entity Type - the type of entity (not to be confused with Label.</li>
+	<li>Count - how many times the entity appears in the document</li>
+	<li>Negative, Neutral, Positive Counts - I'm guessing here, but it seems 
+	this is the count of sentiment (negative, neutral, or positive) in the text 
+	for a particular entity.</li>
+</ul>
+<h3>Other Semantic Types</h3>
+<p>In addition, each provides several additional categories of parsing.&nbsp; Be 
+aware that the names of these categories and their attributes is derived from 
+the API names.</p>
+<p><u>AlchemyAPI</u></p>
+<ul>
+	<li>Keywords - while stating that AlchemyAPI can extract keywords, the 
+	actual definition of what &quot;keyword&quot; is lacking.<ul>
+		<li>attributes of Keywords are Text and Relevance</li>
+	</ul>
+	</li>
+	<li>Concepts - as with Keywords, there is no definition of what a concept 
+	is.<ul>
+		<li>attributes of Concepts are Text, Relevance, dbpedia (linked data), 
+		freebase (linked data), and opencyc (linked data.)</li>
+	</ul>
+	</li>
+	<li>Relationships - <i>&quot;AlchemyAPI provides the ability to identify named 
+	entities within subjects and objects of identified Subject-Action-Object 
+	relations, supporting advanced entity recognition capabilities including 
+	disambiguation, coreference resolution, and linked data output.&quot;</i> (<a href="http://www.alchemyapi.com/api/relation/entities.html">http://www.alchemyapi.com/api/relation/entities.html</a>)&nbsp; 
+	I do not show relationship information in the demo code.</li>
+</ul>
+<p><u>OpenCalais</u></p>
+<ul>
+	<li>Topics (aka facts, as is appears on the web pages.)<ul>
+		<li>&nbsp;attributes of Topics are Value, SCore, and Taxonomy (so far 
+		I've only seen &quot;Calais&quot; for taxonomy.)</li>
+	</ul>
+	</li>
+	<li>Events<ul>
+		<li>attributes of Events is EventName</li>
+	</ul>
+	</li>
+</ul>
+<p><u>Semantria</u></p>
+<ul>
+	<li>Facets - <i>&quot;Semantria’s facets are a feature unique to Discovery Mode. 
+	Facets give you insight on what’s trending in your collection of texts by 
+	extracting key facets and their accompanying attribute, giving you a bird’s 
+	eye view of what’s going on with your content. With this information, you’ll 
+	have the knowledge to construct more specific and relevant queries to dig 
+	deep into your content.&quot;</i> (<a href="https://semantria.com/features/facets">https://semantria.com/features/facets</a>) 
+	<ul>
+		<li>attributes are Label, Count, NegativeCount, NeutralCount, and 
+		PositiveCount.</li>
+	</ul>
+	</li>
+	<li>Themes - <i>&quot;Semantria extracts themes within your content so that you 
+	can determine and follow trends that appear over a period of time. Themes 
+	are noun phrases extracted from text and are the primary means of 
+	identifying the main ideas within your content. In addition, Semantria 
+	assigns a sentiment score to each extracted theme, so you’ll understand the 
+	tone behind the themes.&quot;</i> (<a href="https://semantria.com/features/themes">https://semantria.com/features/themes</a>) 
+	<ul>
+		<li>attributes are PhrasesCount, ThemesCount, SentimentScore, 
+		SentimentPolarity, Title</li>
+	</ul>
+	</li>
+	<li>Topics - Themes seem to overall abstractions, such as &quot;Technology&quot;, 
+	&quot;Science&quot;, &quot;Hardware&quot;, &quot;Economics&quot;, etc.<ul>
+		<li>attributes are Title, Type, Hitcount, SentimentScore, Label, and 
+		SentimentPolarity</li>
+	</ul>
+	</li>
+</ul>
+<h2>The Three Contenders</h2>
+<p>I've reviewed three NLP providers: AlchemyAPI, OpenCalais, and Semantria.&nbsp; 
+They each offer similar services in that they will process text, producing a 
+list of entities and relevance of those entities, along with additional 
+information that is unique to each of them, which I'll explore briefly as well.&nbsp; 
+Let's first visit what each provider has to say about themselves and NLP:</p>
 <h3>Documents and Web Content Scraping</h3>
 <p>OpenCalais and Semantria are both document-based 
 NLP's and as such require that that the web page scraping has been performed a 
@@ -95,12 +249,6 @@ etc.) then this is a moot point with regards to OpenCalais and Semantria.</p>
 excellent contact with people from all three providers, there has been in no way any persuasion to bias this 
 article, though I have coordinated with a couple to ensure that I am presenting 
 their product adequately.&nbsp; </p>
-<h2>The Three Contenders</h2>
-<p>I've reviewed three NLP providers: AlchemyAPI, OpenCalais, and Semantria.&nbsp; 
-They each offer similar services in that they will process text, producing a 
-list of entities and relevance of those entities, along with additional 
-information that is unique to each of them, which I'll explore briefly as well.&nbsp; 
-Let's first visit what each provider has to say about themselves and NLP:</p>
 <h3>AlchemyAPI</h3>
 <p><img border="0" src="alchemy1.png" width="993" height="206"></p>
 <p><a href="http://www.alchemyapi.com/">http://www.alchemyapi.com/</a> </p>
@@ -409,7 +557,58 @@ changed, to a maximum of 20:</p>
 <p>However, this had no effect on the results.</p>
 <h2>A Couple Sample Runs</h2>
 <p>Here's a couple sample runs that I've made to very roughly compare the 
-results of the three NLP services.</p>
+results of the three NLP services.&nbsp; The code that does the processing runs 
+each service request asynchronously, marshalling the UI data grid updates back 
+onto the UI thread (not shown):</p>
+<pre>/// &lt;summary&gt;
+/// Process the URL with AlchemyAPI, OpenCalais, and Semantra NLP's.
+/// &lt;/summary&gt;
+protected async void Process(object sender, EventArgs args)
+{
+  btnProcess.Enabled = false;
+  ClearAllGrids();
+  string url = tbUrl.Text;
+  sbStatus.Text = &quot;Acquiring page content...&quot;;
+
+  string pageText = await Task.Run(() =&gt;
+  {
+    return GetPageText(url);
+  });
+
+  sbStatus.Text = &quot;Processing results with Alchemy...&quot;;
+
+  double alchemyTime = await Task.Run(() =&gt;
+  {
+    StartTimer();
+    LoadAlchemyResults(pageText);
+    return StopTimer();
+  });
+
+  sbStatus.Text = &quot;Processing results with OpenCalais...&quot;;
+
+  double calaisTime = await Task.Run(() =&gt;
+  {
+    StartTimer();
+    LoadCalaisResults(pageText);
+    return StopTimer();
+  });
+
+  sbStatus.Text = &quot;Processing results with Semantria...&quot;;
+
+  double semantriaTime = await Task.Run(() =&gt;
+  {
+    StartTimer();
+    LoadSemantriaResults(pageText);
+    return StopTimer();
+  });
+  
+  sbStatus.Text = &quot;Done processing.&quot;;
+
+  ReportTimes(alchemyTime, calaisTime, semantriaTime);
+  btnProcess.Enabled = true;
+}</pre>
+<p>This way, the UI remains responsive and you can interact with it while other 
+results are still coming in.</p>
 <h3>Wikipedia's Computer Science Page</h3>
 <p>Here's the results from parsing
 <a href="http://en.wikipedia.org/wiki/Computer_science">
@@ -430,7 +629,16 @@ I am testing high throughputs.&nbsp; I also haven't simulated customer service
 issues.&nbsp; All three providers replied very quickly when I emailed them that 
 I was writing this article, and I've had excellent and helpful conversations 
 with all of them.</p>
-<p>&nbsp;</p>
+<p>Also, as a general criticism, each provider would do well to explicitly 
+define what the various terms mean in their API's and the collection attributes.&nbsp; 
+If one is to use these services for serious analysis of documents, an exact 
+meaning is a requirement.</p>
+<p>Lastly, I feel as though I owe an apology to the reader -- this review has 
+taken a considerable amount of time and I have glossed over (or outright 
+skipped) many of the features of these providers.&nbsp; While this article 
+hopefully provides some useful information, I strongly suggest that you invest 
+each provider in detail yourself to see what additional features and 
+capabilities exist.</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
