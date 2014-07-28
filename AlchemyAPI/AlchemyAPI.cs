@@ -948,17 +948,28 @@ namespace AlchemyAPI
 
                 XmlElement root = xmlDoc.DocumentElement;
 
-                if (AlchemyAPI_BaseParams.OutputMode.XML == outputMode)
-                {
-                    XmlNode status = root.SelectSingleNode("/results/status");
+				if (AlchemyAPI_BaseParams.OutputMode.XML == outputMode)
+				{
+					XmlNode status = root.SelectSingleNode("/results/status");
 
-                    if (status.InnerText != "OK")
-                    {
-                        System.ApplicationException ex =
-						new System.ApplicationException ("Error making API call.");
+					if (status.InnerText != "OK")
+					{
+						string errorMessage = "Error making API call.";
 
-                        throw ex;
-                    }
+						try
+						{
+							XmlNode statusInfo = root.SelectSingleNode("/results/statusInfo");
+							errorMessage = statusInfo.InnerText;
+						}
+						catch
+						{
+							// some problem with the statusInfo.  Return the generic message.
+						}
+
+						System.ApplicationException ex = new System.ApplicationException (errorMessage);
+
+						throw ex;
+					}
                 }
                 else if (AlchemyAPI_BaseParams.OutputMode.RDF == outputMode)
                 {
