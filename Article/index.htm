@@ -10,7 +10,7 @@
 
 <p>Comparison of Three Natural Language Processors, AlchemyAPI, OpenCalais, and 
 Semantria</p>
-<p><img border="0" src="screenshot-small.png" width="769" height="576"></p>
+<p><img border="0" src="screenshot-small.png" width="766" height="570"></p>
 <h2>Introduction</h2>
 <p>I've been looking into Natural Language Processors (NLP's) and thought I 
 would share the results of my investigations.&nbsp; We'll look at:</p>
@@ -20,6 +20,7 @@ would share the results of my investigations.&nbsp; We'll look at:</p>
 	<li>API call examples</li>
 	<li>NLP results</li>
 </ul>
+<p>[TODO: Screenshots of logos]</p>
 <p>I've reviewed three NLP providers: AlchemyAPI, OpenCalais, and Semantria.&nbsp; 
 They each offer similar services in that they will process text, producing a 
 list of entities and relevance of those entities, along with additional 
@@ -140,16 +141,15 @@ documentation on their web page
 <a href="https://semantria.com/features/entity-extraction">
 https://semantria.com/features/entity-extraction</a>.)</p>
 <ul>
-	<li>Label - this attribute contains some arbitrary information about the 
-	entity, perhaps further specifying its type, such as the entity &quot;IBM&quot; has 
-	the label &quot;Company&quot; whereas the entity &quot;United States&quot; has the label 
-	&quot;Place&quot;.</li>
-	<li>Type - seems to always be &quot;named&quot;</li>
-	<li>Entity Type - the type of entity (not to be confused with Label.</li>
-	<li>Count - how many times the entity appears in the document</li>
-	<li>Negative, Neutral, Positive Counts - I'm guessing here, but it seems 
-	this is the count of sentiment (negative, neutral, or positive) in the text 
-	for a particular entity.</li>
+	<li>Type</li>
+	<li>Evidence</li>
+	<li>Confident</li>
+	<li>IsAbout</li>
+	<li>EntityType</li>
+	<li>Title</li>
+	<li>Label</li>
+	<li>Sentiment Score</li>
+	<li>Sentiment Polarity</li>
 </ul>
 <h3>Other Semantic Information</h3>
 <p>In addition, each provides several additional categories of parsing.&nbsp; Be 
@@ -188,15 +188,10 @@ the API names.</p>
 </ul>
 <p><u>Semantria</u></p>
 <ul>
-	<li>Facets - <i>&quot;Semantria’s facets are a feature unique to Discovery Mode. 
-	Facets give you insight on what’s trending in your collection of texts by 
-	extracting key facets and their accompanying attribute, giving you a bird’s 
-	eye view of what’s going on with your content. With this information, you’ll 
-	have the knowledge to construct more specific and relevant queries to dig 
-	deep into your content.&quot;</i> (<a href="https://semantria.com/features/facets">https://semantria.com/features/facets</a>) 
-	<ul>
-		<li>attributes are Label, Count, NegativeCount, NeutralCount, and 
-		PositiveCount.</li>
+	<li>Topics - Themes seem to overall abstractions, such as &quot;Technology&quot;, 
+	&quot;Science&quot;, &quot;Hardware&quot;, &quot;Economics&quot;, etc.<ul>
+		<li>attributes are Title, Type, Hitcount, StrengthScore, SentimentScore, Label, and 
+		SentimentPolarity</li>
 	</ul>
 	</li>
 	<li>Themes - <i>&quot;Semantria extracts themes within your content so that you 
@@ -206,21 +201,27 @@ the API names.</p>
 	assigns a sentiment score to each extracted theme, so you’ll understand the 
 	tone behind the themes.&quot;</i> (<a href="https://semantria.com/features/themes">https://semantria.com/features/themes</a>) 
 	<ul>
-		<li>attributes are PhrasesCount, ThemesCount, SentimentScore, 
+		<li>attributes are Evidence, IsAbout, StrengthScore, SentimentScore, 
 		SentimentPolarity, Title</li>
 	</ul>
 	</li>
-	<li>Topics - Themes seem to overall abstractions, such as &quot;Technology&quot;, 
-	&quot;Science&quot;, &quot;Hardware&quot;, &quot;Economics&quot;, etc.<ul>
-		<li>attributes are Title, Type, Hitcount, SentimentScore, Label, and 
-		SentimentPolarity</li>
-	</ul>
-	</li>
 </ul>
+<h3>Anaphora Resolution</h3>
+<p>As pointed out by the folks at OpenCalais, NLP includes something called 
+anaphora resolution:</p>
+<p><i>&quot;In linguistics, anaphora /&#601;&#712;næf&#601;r&#601;/ is the use of an expression the 
+interpretation of which depends upon another expression in context (its 
+antecedent or postcedent). In the sentence Sally arrived, but nobody saw her, 
+the pronoun her is anaphoric, referring back to Sally. The term anaphora denotes 
+the act of referring, whereas the word that actually does the referring is 
+sometimes called an anaphor (or cataphor).&quot; </i>(<a href="http://en.wikipedia.org/wiki/Anaphora_(linguistics)">http://en.wikipedia.org/wiki/Anaphora_%28linguistics%29</a>)
+</p>
+<p>It first puzzled me as to why the counts of entities were often higher than 
+the actual instances of those entities, and the above explains the reason why.</p>
 <h2>The Three Contenders</h2>
 <p>We'll look shortly at what each of the three providers has to say about 
 themselves.&nbsp; First however, I'd like to talk a little about document 
-processing and web content scraping.</p>
+processing, web content scraping, and initialization.</p>
 <h3>Documents and Web Content Scraping</h3>
 <p>All three providers can work with text documents, however only AlchemyAPI 
 provides web content scraping directly as part of the API.&nbsp; OpenCalais and Semantria are both document-based 
@@ -246,6 +247,56 @@ protected string GetPageText(string url)
 }</pre>
 <p>This way at least, the text being handed to each NLP will be the same.&nbsp; If you're not processing content from web pages (blogs, news feeds, articles, 
 etc.) then this is a moot point with regards to OpenCalais and Semantria.&nbsp; </p>
+<h3>Initialization</h3>
+<p>Initialization of AlchemyAPI and OpenCalais is very simple.&nbsp; One of the 
+issues that you may encounter however is limits to the number of entities (or 
+other items) returned.&nbsp; While OpenCalais does not impose any limits, 
+AlchemyAPI defaults to 50 entities and Semantria defaults to 5.&nbsp; Changing 
+the limit in AlchemyAPI is very simple -- you pass in some additional parameters 
+when requesting the processing:</p>
+<pre>eparams = new AlchemyAPI_EntityParams();
+eparams.setMaxRetrieve(250);</pre>
+<p>Semantria is tailored more toward bulk document processing.&nbsp; You can 
+have a large number of different configurations that you can choose from 
+depending on the document you want processed.&nbsp; Initialization of these 
+configurations however takes some time to communicate to the server and the get 
+a response back.&nbsp; In the code that I put together, I first request the 
+current configurations (there are 8 initially based on language) and then I 
+change the limit (which has a maximum of 50) and then this new configuration 
+must be uploaded.&nbsp; </p>
+<pre>protected void IncreaseLimits()
+{
+  // This takes considerable time to get the configurations back from the server.
+  List&lt;Configuration&gt; configurations = session.GetConfigurations();
+  config = configurations.FirstOrDefault(item =&gt; item.Language.Equals(&quot;English&quot;));
+
+  if (config != null)
+  {
+    config.Document.NamedEntitiesLimit = 50;
+    config.Document.ConceptTopicsLimit = 50;
+    config.Document.EntityThemesLimit = 50;
+    session.UpdateConfigurations(new List&lt;Configuration&gt;() { config });
+  }
+}</pre>
+<p>This all takes time and is why the Process button is disabled for so long 
+during application startup.&nbsp; However, once done, the configurations can be 
+used without further time penalty.&nbsp; It is also interesting to note that the 
+configurations are persisted between sessions -- I assume they are associated 
+with your API key, so once configurations are created, technically I don't need 
+to run this step unless I want to make a change.&nbsp; For this reason, the 
+method IncreaseLimits() in the Initialize method:</p>
+<pre>public void Initialize()
+{
+  string apikey = File.ReadAllText(&quot;semantriaapikey.txt&quot;);
+  string[] keys = apikey.Split('\r');
+  consumerKey = keys[0].Trim();
+  consumerSecret = keys[1].Trim();
+  serializer = new JsonSerializer();
+  session = Session.CreateSession(consumerKey, consumerSecret, serializer);
+
+  IncreaseLimits();     // &lt;---- Comment me out when the limits have been increased after the first-ever run
+}</pre>
+<p>can be commented out after you first configure Semantria.</p>
 <h3>AlchemyAPI</h3>
 <p><img border="0" src="alchemy1.png" width="993" height="206"></p>
 <p><a href="http://www.alchemyapi.com/">http://www.alchemyapi.com/</a> </p>
@@ -290,7 +341,7 @@ semantic functionality within your blog, content management system, website or
 application.&quot;</i></p>
 <p>OpenCalais supports English, French and Spanish.</p>
 <h3>Semantria</h3>
-<p><img border="0" src="semantria1.png" width="990" height="205"></p>
+<p><img border="0" src="semantria1.png" width="962" height="191"></p>
 <p><a href="https://semantria.com/">https://semantria.com/</a> </p>
 <p><i>&quot;Semantria applies Text and Sentiment Analysis to tweets, facebook posts, 
 surveys, reviews or enterprise content.&nbsp; Semantria is a complete 
@@ -323,17 +374,36 @@ Diffbot</a> for webpage scraping.</p>
 <p>Pricing varies considerably and is based on number of transactions being 
 processed daily/monthly and level of customer support.</p>
 <h3>AlchemyAPI</h3>
-<p>Five Tiers:</p>
-<p>Free: 1,000 transactions / day, supporting five concurrent requests, no 
-support</p>
-<p>$250/month: 90,000 transactions / month, 5 concurrent requests, email support</p>
-<p>$750/month: 300,000 transactions / month, 15 concurrent requests, email 
-support</p>
-<p>$1750/month: 3,000,000 transactions / month, 25 concurrent requests, email 
-and phone support, uptime guarantee</p>
-<p>Custom for more than 3M transactions.</p>
+<p>The pricing that I describe here may not be up on the AlchemyAPI website at 
+the time of this writing, as I was notified that the pricing structure has 
+changed somewhat.</p>
+<p>There are five tiers:</p>
+<ol>
+	<li>Free: 1,000 transactions / day, supporting five concurrent requests, no 
+support</li>
+	<li>$250/month: 90,000 transactions / month, 5 concurrent requests, email support</li>
+	<li>$750/month: 300,000 transactions / month, 15 concurrent requests, email 
+support</li>
+	<li>$1750/month: 3,000,000 transactions / month, 25 concurrent requests, email 
+and phone support, uptime guarantee</li>
+	<li>Custom for more than 3M transactions.</li>
+</ol>
 <p>For academia, AlchemyAPI offers an increased number of transactions per day 
 in the Free tier.</p>
+<p>There is also a &quot;Performance and Support Package&quot; that you can select:</p>
+<ul>
+	<li>Free</li>
+	<li>Pro plan - $595 / mo</li>
+	<li>Enterprise plan - $1995 / mo</li>
+</ul>
+<p>As well as a month-to-month subscription option:</p>
+<ul>
+	<li>First 250,000 transactions / mo: $0.0035 / transaction</li>
+	<li>Next 750,000 transactions /mo: $0.0015 / transaction</li>
+	<li>Next 1,000,000 transactions /mo: $0.00075 / transaction</li>
+	<li>Next 3,000,000 transactions /mo: $0.00050 / transaction</li>
+	<li>Anything over 5,000,000 transactions / mo: $0.0035 / transaction</li>
+</ul>
 <h3>OpenCalais</h3>
 <p>Free: 50,000 transactions per license per day and four transactions per 
 second</p>
@@ -345,15 +415,17 @@ blocks up to maximum of 2,000,000 transactions per day are available.
 ProfessionalCalais meets needs unique to larger-scale publishers. 
 ProfessionalCalais is available as an annual contract.&quot;</i></p>
 <h3>Semantria</h3>
-<p>Five Tiers:</p>
-<p>Free Trial: First 10,000 transactions (total, not per month) free, full 
+<p>There are five tiers:</p>
+<ol>
+	<li>Free Trial: First 10,000 transactions (total, not per month) free, full 
 featured (although see below in the API discussion for issues that I 
-encountered)</p>
-<p>$999/month: Excel Seat, unlimited transactions</p>
-<p>$999/month: API Standard, 100,000 transactions / month, some limits (like 
-number of supported languages)</p>
-<p>$1999/month: API Premium, 1,000,000 transactions / month</p>
-<p>Custom for more than 1M transactions per month</p>
+encountered)</li>
+	<li>$999/month: Excel Seat, unlimited transactions</li>
+	<li>$999/month: API Standard, 100,000 transactions / month, some limits (like 
+number of supported languages)</li>
+	<li>$1999/month: API Premium, 1,000,000 transactions / month</li>
+	<li>Custom for more than 1M transactions per month</li>
+</ol>
 <p>DiffBbot, which integrates with Semantria for webpage scraping, has its own 
 pricing structure and I am not aware of how that changes the pricing structure. </p>
 <h2>API's</h2>
@@ -483,83 +555,97 @@ public IList GetEntities()
 {
   return document.Entities.ToList();
 }</pre>
-<p>Lastly, I found that OpenCalais is by far the slowest of the parsers.</p>
+<h4>Other Tidbits Regarding OpenCalais</h4>
+<p>There is a complementary service, <a href="http://semanticproxy.com/">
+http://semanticproxy.com/</a>, that is supposed to perform content scraping, 
+however, when I tried to use it (at different times) I constantly received a 
+&quot;Java out of memory&quot; error.</p>
+<p>In this demonstration code, I am using &quot;Simple Format&quot; output.&nbsp; 
+According to Ofer Harari:</p>
+<p><i>&quot;Simple Format output which is the poorest format in terms of capabilities 
+(Simple format is for a quick and easy output from Calais. Not for a detailed 
+response). The standard format is RDF or JSON. These outputs include all the 
+metadata that Open Calais can extract.&quot;</i></p>
 <h3>Semantria</h3>
-<p>Semantria's .NET API is a bit awkward to work with.&nbsp; With my scraped 
+<p>For some reason I found Semantria's .NET API to be complicated to work with, 
+which I realized after having success with it is that it takes a different 
+approach to processing documents.&nbsp; With AlchemyAPI and OpenCalais, you make 
+the call and wait for the results.&nbsp; With Semantria, it is very bulk-process 
+centric.&nbsp; Documents that are sent to the Semantria servers are queued and 
+can return asynchronously with results or in a different order from the original 
+input into the queue.&nbsp; This makes working with a single document more 
+complex (see code below) but clearly, the strength of Semantria's API is much 
+more evident when working with bulk documents. </p>
+<p>There is also two modes of document analysis, described here:
+<a href="https://semantria.com/support/developer/overview/processing">
+https://semantria.com/support/developer/overview/processing</a> </p>
+<ol>
+	<li>Detailed Mode</li>
+	<li>Discovery Mode</li>
+</ol>
+<h4>Detailed Mode</h4>
+<p><i>&quot;After submitting documents to be queued, each document will be analyzed 
+independently of the others. Semantria API will return an analysis for each 
+document.&quot;</i></p>
+<h4>Discovery Mode</h4>
+<p><i>&quot;This method submits an array of documents to be analyzed in relation to 
+each other and returns one output. Discovery analysis will contain a summary of 
+commonalities, sentiments, named entity extraction, themes, and categorization 
+for all the documents in the collection.&quot;</i></p>
+<p>This article reviews Detailed Mode only, however, when working with Discovery 
+Mode I &quot;discovered&quot; an issue with document size--with my scraped 
 webpage content string, I was getting 
-&quot;line too long&quot; exceptions and, perusing the sample code, discovered that text 
-needs to be broken up into separate lines:</p>
-<pre>/// &lt;summary&gt;
-/// The content needs to be split into small chunks, otherwise an exception is thrown (line too long.)
-/// &lt;/summary&gt;
-protected Collection SplitContent(string content)
+&quot;line too long&quot; exceptions.</p>
+<p>Calling the parser requires polling to see if the document is analyzed.&nbsp; 
+While there is a DocsAutoResponse event callback, this isn't what it seems -- if 
+the document is queued (which is the standard behavior) this callback is never 
+made, and I'm not sure how this event helps, unless it is associated with the 
+bulk processing.&nbsp; Here is the parse request and response poll code:</p>
+<pre>public void ParseUrl(string content)
 {
-  Collection collection = new Collection() { Id = Guid.NewGuid().ToString(), Documents = new List&lt;string&gt;() };
-
-  content.Split('\n').ForEach(s =&gt;
-  {
-    string trimmed = s.Trim();
-
-    // Ignore empty lines.
-    if (!String.IsNullOrEmpty(trimmed))
-    {
-      collection.Documents.Add(trimmed);
-    }
-  });
-
-  return collection;
-}</pre>
-<p>Once this was accomplished, calling the parser was straight-forward:</p>
-<pre>public void ParseUrl(string url)
-{
-  // We need to get the content ourselves.
-  string content = Program.GetContentFromUrl(url);
-  Collection collection = SplitContent(content);
-
-  int queueRet = session.QueueCollection(collection); // if ret != -1 then the document has been queued.
+  string docId = Guid.NewGuid().ToString();
+  Document doc = new Document() {Id = docId, Text = content};
+  docResults = new List&lt;DocAnalyticData&gt;();
+  int result = session.QueueDocument(doc, configID);
+  DocAnalyticData ret;
+  DateTime start = DateTime.Now;
 
   do
   {
-    Thread.Sleep(1000); // wait some arbitrary time for results to appear.
-    // TODO: Is there a notification callback when the processing is done or do we need to implement it ourselves by wrapping this in an awaitable task?
-    result = session.GetCollection(collection.Id);
-  } while (result.Status == Semantria.Com.TaskStatus.QUEUED);
+    // Semantria guarantees a result within 10 seconds. But how fast is it really?
+    Thread.Sleep(100);
+    ret = session.GetDocument(doc.Id, configID);
 
-  Assert.That(result.Status == Semantria.Com.TaskStatus.PROCESSED, &quot;Failure to process content.&quot;);
-}</pre>
-<p>The call is also awkward -- note the <code>Thread.Sleep(1000)</code> as we await a 
-response from the server.&nbsp; Since the call to <code>GetCollection</code> returns 
-immediately, it would have been useful if the API provided some notification 
-mechanism.</p>
-<p>Also, I only discovered in discussions with the nice folks at Semantria 
-that there are default limits on the number of entities, facets, themes, and 
-topics returned by the parser (5, 15, 5, and 10 respectively.)&nbsp; The trial 
-version says it is full-featured on the website, but according to Semantria &quot;The 
-reason why you got only 5 entities ...is because default limit for each trial 
-account is max 5 entities per document.&quot;&nbsp; Apparently this can be 
-changed, to a maximum of 20:</p>
-<pre>protected void IncreaseLimits()
-{
-  List&lt;Configuration&gt; configurations = session.GetConfigurations();
-  Configuration config = configurations.FirstOrDefault(item =&gt; item.Language.Equals(&quot;English&quot;));
+    if ((DateTime.Now - start).TotalSeconds &gt; 15)
+    {
+        throw new ApplicationException(&quot;Semantria did not return with 15 seconds.&quot;);
+    }
+  } while (ret.Status == Semantria.Com.TaskStatus.QUEUED);
 
-  if (config != null)
+  if (ret.Status == Semantria.Com.TaskStatus.PROCESSED)
   {
-    config.Document.NamedEntitiesLimit = 20;
-    config.Document.ConceptTopicsLimit = 20;
-    config.Document.EntityThemesLimit = 20;
-    session.UpdateConfigurations(new List&lt;Configuration&gt;() { config });
+    docResults.Add(ret);
+  }
+  else
+  {
+    throw new ApplicationException(&quot;Error processing document: &quot; + ret.Status.ToString());
   }
 }</pre>
-<p>However, this had no effect on the results.</p>
+<p>As stated at the beginning of this article under Initialization, the default 
+number of entities is 5 (themes is also 5 and topics is 10).&nbsp; In this 
+article I have increased the limit to 50 (though there was some confusion as to 
+whether the absolute limit was 20, as one can see from running the program, that 
+is not the case.)</p>
 <h2>A Sample Run</h2>
 <p>The screenshots that I've been using come from parsing this page:
 <a href="http://en.wikipedia.org/wiki/Computer_science">
 http://en.wikipedia.org/wiki/Computer_science</a>.&nbsp; You can of course enter 
 your own URL in the demo application (try a Code Project article, the results 
-are often interesting.)&nbsp; The code that does the processing runs 
-each service request asynchronously, marshalling the UI data grid updates back 
-onto the UI thread (not shown):</p>
+are often interesting.)&nbsp; The code that does the processing runs each 
+service request asynchronously, marshalling the UI data grid updates back onto 
+the UI thread (not shown).&nbsp; I also cache (using the URL's hash code) the 
+scraped web page returned by AlchemyAPI so I'm not constantly making a &quot;get page 
+content&quot; request to AlchemyAPI when testing the same web pages over and over.</p>
 <pre>/// &lt;summary&gt;
 /// Process the URL with AlchemyAPI, OpenCalais, and Semantra NLP's.
 /// &lt;/summary&gt;
@@ -570,36 +656,35 @@ protected async void Process(object sender, EventArgs args)
   string url = tbUrl.Text;
   sbStatus.Text = &quot;Acquiring page content...&quot;;
 
-  string pageText = await Task.Run(() =&gt;
-  {
-    return GetPageText(url);
-  });
+  // Eases debugging when we comment out one or more of the NLP's to test the other.
+  double alchemyTime = 0;
+  double calaisTime = 0;
+  double semantriaTime = 0;
+
+  string pageText = await Task.Run(() =&gt; GetUrlText(url));
 
   sbStatus.Text = &quot;Processing results with Alchemy...&quot;;
 
   double alchemyTime = await Task.Run(() =&gt;
   {
-    StartTimer();
     LoadAlchemyResults(pageText);
-    return StopTimer();
+    return ElapsedTime();
   });
 
   sbStatus.Text = &quot;Processing results with OpenCalais...&quot;;
 
   double calaisTime = await Task.Run(() =&gt;
   {
-    StartTimer();
     LoadCalaisResults(pageText);
-    return StopTimer();
+    return ElapsedTime();
   });
 
   sbStatus.Text = &quot;Processing results with Semantria...&quot;;
 
   double semantriaTime = await Task.Run(() =&gt;
   {
-    StartTimer();
     LoadSemantriaResults(pageText);
-    return StopTimer();
+    return ElapsedTime();
   });
   
   sbStatus.Text = &quot;Done processing.&quot;;
@@ -609,40 +694,9 @@ protected async void Process(object sender, EventArgs args)
 }</pre>
 <p>This way, the UI remains responsive and you can interact with it while other 
 results are still coming in.</p>
-<h3>Strange Behaviors</h3>
-<p>It would seem that AlchemyAPI has a limit of 50 entities.&nbsp; Semantria has 
-stated to me (and it's somewhere on the website, but not obvious) that the 
-default entity limit is 5.&nbsp; OpenCalais apparently does not limit entities, 
-as it returns 155 results.</p>
-<p>Oddly thought, AlchemyAPI reports a count of 6 occurances of &quot;Charles 
-Babbage&quot;, Open Calais reports a frequency of 13, and yet the actual count of 
-occurances in the document is 4!</p>
-<p>Similarly, for Blaise Pascal, the counts / frequency are:</p>
-<ul>
-	<li>Alchemy API: 3</li>
-	<li>OpenCalais: 4 (frequency)</li>
-	<li>Semantria: 2</li>
-	<li>Actual count in the document: 2</li>
-</ul>
-<p>It's quite the puzzler as to why there is over-reporting of the count of 
-entities in AlchemyAPI and OpenCalais, and this is disturbing as the count might 
-be used for statistcal purposes.</p>
-<p>Conversely, if we look for occurrences of &quot;IBM&quot; in the text and compare the 
-results to the actual count in the scraped document:</p>
-<ul>
-	<li>Alchemy API: not reported</li>
-	<li>OpenCalais: 8 (frequency)</li>
-	<li>Semantria: 3</li>
-	<li>Actual count in the document: 8</li>
-</ul>
-<p>As with Semantria with a default limit of 5 entities, it would appear that 
-IBM was dropped out as a result of the AlchemyAPI's 50 entity limit.&nbsp; 
-Again, this is seriously disturbing because these limits are not described 
-anywhere (or at least not anywhere obvious) on the respective web pages.&nbsp; 
-It appears only OpenCalais has a reasonably comprehensive list of entities, </p>
 <h2>Conclusions</h2>
 <p>The testing here is not exhaustive--some may argue not even comprehensive.&nbsp; 
-I am testing high throughputs.&nbsp; I also haven't simulated customer service 
+I am not testing high throughputs.&nbsp; I also haven't simulated customer service 
 issues.&nbsp; All three providers replied very quickly when I emailed them that 
 I was writing this article, and I've had excellent and helpful conversations 
 with all of them.</p>
@@ -650,34 +704,22 @@ with all of them.</p>
 define what the various terms mean in their API's and the collection attributes.&nbsp; 
 If one is to use these services for serious analysis of documents, an exact 
 meaning is a requirement.</p>
-<p>Additionally, as mentioned earlier, it is disturbing that the counts / 
-frequency reported by all three providers is often incorrect.&nbsp; Furthermore, 
-AlchemyAPI and Semantria have limits to the number of entities returned, which, 
-for semantic analysis, results in missing data.&nbsp; I find this very 
-disturbing when considering that I want a comprehensive list of entities for the 
-project that I have in mind.&nbsp; </p>
 <p>While I had originally set out with the goal of not drawing any conclusions 
 about the three providers and rather to simply present my findings, I have 
-definitely become biased towards AlchemyAPI as a result of having to fix API 
-problems in OpenCalais, perform convoluted conversion of input data to keep 
-Semantria happy with line lengths, and lastly, ending up utilizing AlchemyAPI to 
-retrieve the text for OpenCalais and Semantria to parse.&nbsp; However, the 
-limits imposed by AlchemyAPI suggest that I would rather use Semantria's web 
-page scraper and feed the resulting document into OpenCalais to get a 
-comprehensive list of entities.&nbsp; Semantria is not a viable candidate 
-because of the pricing (I do not have $1000 a month to throw at a service for 
-what is essentially an open source project demonstration--a completely different 
-article.)</p>
+definitely become biased towards AlchemyAPI based on price and features.&nbsp; 
+It is ironic that I'm using AlchemyAPI's web page content extraction to feed the 
+scraped page text into OpenCalais and Semantria.&nbsp; On the other hand, 
+Semantria returns some interesting attributes (many of which I will admit I 
+don't fully understand) that could be useful inputs to further analysis, 
+categorization, and meaning extraction.&nbsp; If only it supported a free 
+version for us poor folk with limited analysis requirements, but that's a 
+personal bias.</p>
 <p>Lastly, I feel as though I owe an apology to the reader -- this review has 
 taken a considerable amount of time and I have glossed over (or outright 
 skipped) many of the features of these providers.&nbsp; While this article 
 hopefully provides some useful information, I strongly suggest that you invest 
 each provider in detail yourself to see what additional features and 
 capabilities exist.</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
 
 </body>
 

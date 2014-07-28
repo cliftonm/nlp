@@ -43,12 +43,10 @@ namespace NlpComparison
 
 		// Semantria views and grids:
 		protected DataView dvSemantriaEntities;
-		protected DataView dvSemantriaFacets;
 		protected DataView dvSemantriaThemes;
 		protected DataView dvSemantriaTopics;
 
 		protected DataGridView dgvSemantriaEntities;
-		protected DataGridView dgvSemantriaFacets;
 		protected DataGridView dgvSemantriaThemes;
 		protected DataGridView dgvSemantriaTopics;
 
@@ -60,9 +58,13 @@ namespace NlpComparison
 		protected Label lblCalaisTopics;
 		protected Label lblCalaisEvents;
 		protected Label lblSemantriaEntities;
-		protected Label lblSemantriaFacets;
 		protected Label lblSemantriaThemes;
 		protected Label lblSemantriaTopics;
+
+		// NLP's:
+		protected AlchemyWrapper alchemy;
+		protected CalaisWrapper calais;
+		protected SemantriaWrapper semantria;
 
 		public Program()
 		{
@@ -93,7 +95,6 @@ namespace NlpComparison
 
 			// Semantria grids:
 			dgvSemantriaEntities = (DataGridView)mp.ObjectCollection["dgvSemantriaEntities"];
-			dgvSemantriaFacets = (DataGridView)mp.ObjectCollection["dgvSemantriaFacets"];
 			dgvSemantriaThemes = (DataGridView)mp.ObjectCollection["dgvSemantriaThemes"];
 			dgvSemantriaTopics = (DataGridView)mp.ObjectCollection["dgvSemantriaTopics"];
 
@@ -104,9 +105,11 @@ namespace NlpComparison
 			lblCalaisTopics = (Label)mp.ObjectCollection["lblCalaisTopics"];
 			lblCalaisEvents = (Label)mp.ObjectCollection["lblCalaisEvents"];
 			lblSemantriaEntities = (Label)mp.ObjectCollection["lblSemantriaEntities"];
-			lblSemantriaFacets = (Label)mp.ObjectCollection["lblSemantriaFacets"];
 			lblSemantriaThemes = (Label)mp.ObjectCollection["lblSemantriaThemes"];
 			lblSemantriaTopics = (Label)mp.ObjectCollection["lblSemantriaTopics"];
+
+			btnProcess.Enabled = false;
+			InitializeNLPs();
 
 			Application.Run(form);
 		}
@@ -120,6 +123,37 @@ namespace NlpComparison
 			program.Initialize();
 		}
 
+		protected async void InitializeNLPs()
+		{
+			sbStatus.Text = "Initializing NLP's...";
+
+			alchemy = await Task.Run(() =>
+				{
+					AlchemyWrapper api = new AlchemyWrapper();
+					api.Initialize();
+					return api;
+				});
+
+			calais = await Task.Run(() =>
+			{
+				CalaisWrapper api = new CalaisWrapper();
+				api.Initialize();
+
+				return api;
+			});
+
+			semantria = await Task.Run(() =>
+				{
+					SemantriaWrapper api = new SemantriaWrapper();
+					api.Initialize();
+
+					return api;
+				});
+
+			btnProcess.Enabled = true;
+			sbStatus.Text = "Ready";
+		}
+
 		/// <summary>
 		/// Process the URL with AlchemyAPI, OpenCalais, and Semantra NLP's.
 		/// </summary>
@@ -130,44 +164,65 @@ namespace NlpComparison
 			string url = tbUrl.Text;
 			sbStatus.Text = "Acquiring page content...";
 
-			string pageText = await Task.Run(() =>
-				{
-					return GetPageText(url);
-				});
+			// Eases debugging when we comment out one or more of the NLP's to test the other.
+			double alchemyTime = 0;
+			double calaisTime = 0;
+			double semantriaTime = 0;
 
-			// File.WriteAllText("c:\\temp\\pagetext.txt", pageText);
-			
+			string pageText = await Task.Run(() => GetUrlText(url));
+
 			sbStatus.Text = "Processing results with Alchemy...";
 
-			double alchemyTime = await Task.Run(() =>
+			alchemyTime = await Task.Run(() =>
 				{
-					StartTimer();
 					LoadAlchemyResults(pageText);
-					return StopTimer();
+					return ElapsedTime();
 				});
 
 			sbStatus.Text = "Processing results with OpenCalais...";
 
-			double calaisTime = await Task.Run(() =>
+			calaisTime = await Task.Run(() =>
 				{
-					StartTimer();
 					LoadCalaisResults(pageText);
-					return StopTimer();
+					return ElapsedTime();
 				});
 
 			sbStatus.Text = "Processing results with Semantria...";
 
-			double semantriaTime = await Task.Run(() =>
+			semantriaTime = await Task.Run(() =>
 				{
-					StartTimer();
 					LoadSemantriaResults(pageText);
-					return StopTimer();
+					return ElapsedTime();
 				});
 
 			sbStatus.Text = "Done processing.";
 
 			ReportTimes(alchemyTime, calaisTime, semantriaTime);
 			btnProcess.Enabled = true;
+		}
+
+		/// <summary>
+		/// Uses AlchemyAPI to scrape the URL.  Also caches the URL, so
+		/// we don't hit AlchemyAPI's servers for repeat queries.
+		/// </summary>
+		protected string GetUrlText(string url)
+		{
+			string urlHash = url.GetHashCode().ToString();
+			string textFilename = urlHash + ".txt";
+			string pageText;
+
+			if (File.Exists(textFilename))
+			{
+				pageText = File.ReadAllText(textFilename);
+			}
+			else
+			{
+				pageText = GetPageText(url); 
+			}
+
+			File.WriteAllText(textFilename, pageText);
+
+			return pageText;
 		}
 
 		protected void ClearAllGrids()
@@ -181,16 +236,17 @@ namespace NlpComparison
 			dgvCalaisEvents.DataSource = null;
 
 			dgvSemantriaEntities.DataSource = null;
-			dgvSemantriaFacets.DataSource = null;
 			dgvSemantriaThemes.DataSource = null;
 			dgvSemantriaTopics.DataSource = null;
 		}
 
 		protected DateTime start;
+		protected DateTime end;
 
 		protected void StartTimer()
 		{
 			start = DateTime.Now;
+			end = DateTime.Now;
 		}
 
 		/// <summary>
@@ -198,7 +254,14 @@ namespace NlpComparison
 		/// </summary>
 		protected double StopTimer()
 		{
-			return (DateTime.Now - start).TotalSeconds;
+			end = DateTime.Now;
+
+			return ElapsedTime();
+		}
+
+		protected double ElapsedTime()
+		{
+			return (end - start).TotalSeconds;
 		}
 
 		protected void ReportTimes(double alchemyTime, double calaisTime, double semantriaTime)
@@ -229,11 +292,11 @@ namespace NlpComparison
 		{
 			try
 			{
-				AlchemyWrapper alchemy = new AlchemyWrapper();
-				alchemy.Initialize();
+				StartTimer();
 				DataSet dsEntities = alchemy.LoadEntities(text);
 				DataSet dsKeywords = alchemy.LoadKeywords(text);
 				DataSet dsConcepts = alchemy.LoadConcepts(text);
+				StopTimer();
 
 				form.BeginInvoke((Action)(() =>
 					{
@@ -264,9 +327,9 @@ namespace NlpComparison
 		{
 			try
 			{
-				CalaisWrapper calais = new CalaisWrapper();
-				calais.Initialize();
+				StartTimer();
 				calais.ParseUrl(text);
+				StopTimer();
 
 				form.BeginInvoke((Action)(() =>
 					{
@@ -292,19 +355,17 @@ namespace NlpComparison
 		{
 			try
 			{
-				SemantriaWrapper semantria = new SemantriaWrapper();
-				semantria.Initialize();
+				StartTimer();
 				semantria.ParseUrl(text);
+				StopTimer();
 
 				form.BeginInvoke((Action)(() =>
 					{
 						dgvSemantriaEntities.DataSource = semantria.GetEntities();
-						dgvSemantriaFacets.DataSource = semantria.GetFacets();
 						dgvSemantriaThemes.DataSource = semantria.GetThemes();
 						dgvSemantriaTopics.DataSource = semantria.GetTopics();
 
 						lblSemantriaEntities.Text = String.Format("Entities: {0}", ((IList)dgvSemantriaEntities.DataSource).Count);
-						lblSemantriaFacets.Text = String.Format("Facets: {0}", ((IList)dgvSemantriaFacets.DataSource).Count);
 						lblSemantriaThemes.Text = String.Format("Themes: {0}", ((IList)dgvSemantriaThemes.DataSource).Count);
 						lblSemantriaTopics.Text = String.Format("Topics: {0}", ((IList)dgvSemantriaTopics.DataSource).Count);
 					}));

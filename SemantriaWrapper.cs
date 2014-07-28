@@ -25,7 +25,10 @@ namespace NlpComparison
 
 		protected JsonSerializer serializer;
 		protected Session session;
-		protected CollAnalyticData result;
+		// https://semantria.com/support/developer/overview/processing
+		protected List<DocAnalyticData> docResults;
+		protected Configuration config;
+		protected string configID = null;
 
 		public SemantriaWrapper()
 		{
@@ -44,48 +47,71 @@ namespace NlpComparison
 
 		public void ParseUrl(string content)
 		{
-			Collection collection = SplitContent(content);
-			int queueRet = session.QueueCollection(collection);
-			Assert.That(queueRet != -1, "Problem queuing data.");			
-			
+			// Document process rather than collection processing.
+			string docId = Guid.NewGuid().ToString();
+			Document doc = new Document() {Id = docId, Text = content};
+			docResults = new List<DocAnalyticData>();
+			int result = session.QueueDocument(doc, configID);
+			DocAnalyticData ret;
+			DateTime start = DateTime.Now;
+
 			do
 			{
-				Thread.Sleep(1000);			// wait some arbitrary time for results to appear.
-				// TODO: Is there a notification callback when the processing is done or do we need to implement it ourselves by wrapping this in an awaitable task?
-				result = session.GetCollection(collection.Id);
-			} while (result.Status == Semantria.Com.TaskStatus.QUEUED);
+				// Semantria guarantees a result within 10 seconds.  But how fast is it really?
+				Thread.Sleep(100);
+				ret = session.GetDocument(doc.Id, configID);
+
+				if ((DateTime.Now - start).TotalSeconds > 15)
+				{
+					throw new ApplicationException("Semantria did not return with 15 seconds.");
+				}
+			} while (ret.Status == Semantria.Com.TaskStatus.QUEUED);
+
+			if (ret.Status == Semantria.Com.TaskStatus.PROCESSED)
+			{
+				docResults.Add(ret);
+			}
+			else
+			{
+				throw new ApplicationException("Error processing document: " + ret.Status.ToString());
+			}
 		}
 
 		public IList GetEntities()
 		{
-			return result.Entities;
-		}
+			List<DocEntity> entities = new List<DocEntity>();
+			docResults.ForEach(d => entities.AddRange(d.Entities));
 
-		public IList GetFacets()
-		{
-			return result.Facets;
+			return entities;
 		}
 
 		public IList GetThemes()
 		{
-			return result.Themes;
+			List<DocTheme> themes = new List<DocTheme>();
+			docResults.ForEach(d => themes.AddRange(d.Themes));
+
+			return themes;
 		}
 
 		public IList GetTopics()
 		{
-			return result.Topics;
+			List<DocTopic> topics = new List<DocTopic>();
+			docResults.ForEach(d => topics.AddRange(d.Topics));
+
+			return topics;
 		}
 
 		protected void IncreaseLimits()
 		{
+			// This takes considerable time to get the configurations back from the server.
 			List<Configuration> configurations = session.GetConfigurations();
-			Configuration config = configurations.FirstOrDefault(item => item.Language.Equals("English"));
+			config = configurations.FirstOrDefault(item => item.Language.Equals("English"));
 
 			if (config != null)
 			{
-				config.Document.NamedEntitiesLimit = 20;
-				config.Document.ConceptTopicsLimit = 20;
-				config.Document.EntityThemesLimit = 20;
+				config.Document.NamedEntitiesLimit = 50;
+				config.Document.ConceptTopicsLimit = 50;
+				config.Document.EntityThemesLimit = 50;
 				session.UpdateConfigurations(new List<Configuration>() { config });
 			}
 		}

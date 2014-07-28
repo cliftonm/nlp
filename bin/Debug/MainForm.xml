@@ -68,31 +68,23 @@
         <Controls>
           <wf:Label def:Name="lblSemantriaEntities" Text="Entities:" Location="20, 20" Size="100, 15"/>
           <wf:DataGridView def:Name="dgvSemantriaEntities"
-                 Location="20, 35" Size="220, 150"
+                 Location="20, 35" Size="300, 150"
                  AllowUserToAddRows="false"
                  AllowUserToDeleteRows="false"
                  ReadOnly="true"
                  SelectionMode="FullRowSelect"
                  RowHeadersVisible="False"/>
-          <wf:Label def:Name="lblSemantriaFacets" Text="Facets:" Location="260, 20" Size="100, 15"/>
-          <wf:DataGridView def:Name="dgvSemantriaFacets"
-                 Location="260, 35" Size="220, 150"
-                 AllowUserToAddRows="false"
-                 AllowUserToDeleteRows="false"
-                 ReadOnly="true"
-                 SelectionMode="FullRowSelect"
-                 RowHeadersVisible="False"/>
-          <wf:Label def:Name="lblSemantriaThemes" Text="Themes:" Location="500, 20" Size="100, 15"/>
-          <wf:DataGridView def:Name="dgvSemantriaThemes"
-                 Location="500, 35" Size="220, 150"
-                 AllowUserToAddRows="false"
-                 AllowUserToDeleteRows="false"
-                 ReadOnly="true"
-                 SelectionMode="FullRowSelect"
-                 RowHeadersVisible="False"/>
-          <wf:Label def:Name="lblSemantriaTopics" Text="Topics:" Location="740, 20" Size="100, 15"/>
+          <wf:Label def:Name="lblSemantriaTopics" Text="Topics:" Location="340, 20" Size="100, 15"/>
           <wf:DataGridView def:Name="dgvSemantriaTopics"
-                 Location="740, 35" Size="220, 150"
+                 Location="340, 35" Size="300, 150"
+                 AllowUserToAddRows="false"
+                 AllowUserToDeleteRows="false"
+                 ReadOnly="true"
+                 SelectionMode="FullRowSelect"
+                 RowHeadersVisible="False"/>
+          <wf:Label def:Name="lblSemantriaThemes" Text="Themes:" Location="660, 20" Size="100, 15"/>
+          <wf:DataGridView def:Name="dgvSemantriaThemes"
+                 Location="660, 35" Size="300, 150"
                  AllowUserToAddRows="false"
                  AllowUserToDeleteRows="false"
                  ReadOnly="true"
