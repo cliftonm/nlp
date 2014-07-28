@@ -11,6 +11,11 @@
 <p>Comparison of Three Natural Language Processors, AlchemyAPI, OpenCalais, and 
 Semantria</p>
 <p><img border="0" src="screenshot-small.png" width="743" height="511"></p>
+<h2>Source Code</h2>
+<p>The source code for this article is located here:
+<a href="https://github.com/cliftonm/nlp">https://github.com/cliftonm/nlp</a></p>
+<p>To run the code, you will need to register with each of the NLP providers and 
+obtain an API key (discussed below.)</p>
 <h2>Introduction</h2>
 <p>I've been looking into Natural Language Processors (NLP's) and thought I 
 would share the results of my investigations.&nbsp; We'll look at:</p>
@@ -699,7 +704,7 @@ bulk processing.&nbsp; Here is the parse request and response poll code:</p>
 <p>As stated at the beginning of this article under Initialization, the default 
 number of entities is 5 (themes is also 5 and topics is 10).&nbsp; In this 
 article I have increased the limit to 50, which is the maximum.</p>
-<h2>A Sample Run</h2>
+<h2>Running the Demo</h2>
 <p>The screenshots that I've been using come from parsing this page:
 <a href="http://en.wikipedia.org/wiki/Computer_science">
 http://en.wikipedia.org/wiki/Computer_science</a>.&nbsp; You can of course enter 
@@ -757,6 +762,17 @@ protected async void Process(object sender, EventArgs args)
 }</pre>
 <p>Using .NET's <code>Task.Run</code> allows the to UI remain responsive so you can interact with it while other 
 results are still coming in.</p>
+<h3>Keys</h3>
+<p>Of course, to run the demo, you will need to register with each provider and 
+obtain your own API keys.&nbsp; These go into their respective files in the 
+bin\debug folder:</p>
+<p>alchemyapikey.txt</p>
+<p>[your key]</p>
+<p>calaisapikey.txt</p>
+<p>[your key]</p>
+<p>semantriaapikey.txt</p>
+<p>[your consumer key]<br>
+[your secret key]</p>
 <h2>A Second Example</h2>
 <p>I decided to throw something more interesting at these providers--Rudolf 
 Steiner's Chapter 3 &quot;Culture, Law, and Economics&quot; of his lecture series
@@ -1212,6 +1228,17 @@ service further investigate the RDF output.</p>
 define what the various terms mean in their API's and the collection attributes.&nbsp; 
 If one is to use these services for serious analysis of documents, an exact 
 meaning is a requirement.</p>
+<p>Lastly, I find the concept of Natural Language Processing intriguing and that 
+it holds many possibilities for helping to filter and analyze the vast and 
+growing amount of information out there on the web.&nbsp; However, I'm not quite 
+sure exactly how one uses the output of an NLP service in a productive way that 
+goes beyond simple keyword matching.&nbsp; Some people will of course be 
+interested in whether the sentiment is positive or negative, and I think the 
+idea of extracting concepts (AlchemyAPI) and topics (Semantria) are useful in 
+extracting higher level abstractions regarding a document.&nbsp; NLP is 
+therefore an interesting field of study and I believe that the people who 
+provide NLP services would benefit from the feedback of users to increase the 
+value of their service.</p>
 
 </body>
 
