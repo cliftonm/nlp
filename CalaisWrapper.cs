@@ -48,6 +48,7 @@ namespace NlpComparison
 			
 			CalaisDotNet calais = new CalaisDotNet(apikey, asAscii);
 			document = calais.Call<CalaisSimpleDocument>();
+			// CalaisRdfDocument rdf = calais.Call<CalaisRdfDocument>();
 		}
 
 		public IList GetEntities()

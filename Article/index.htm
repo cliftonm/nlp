@@ -10,7 +10,7 @@
 
 <p>Comparison of Three Natural Language Processors, AlchemyAPI, OpenCalais, and 
 Semantria</p>
-<p><img border="0" src="screenshot-small.png" width="766" height="570"></p>
+<p><img border="0" src="screenshot-small.png" width="743" height="511"></p>
 <h2>Introduction</h2>
 <p>I've been looking into Natural Language Processors (NLP's) and thought I 
 would share the results of my investigations.&nbsp; We'll look at:</p>
@@ -20,14 +20,16 @@ would share the results of my investigations.&nbsp; We'll look at:</p>
 	<li>API call examples</li>
 	<li>NLP results</li>
 </ul>
-<p>[TODO: Screenshots of logos]</p>
 <p>I've reviewed three NLP providers: AlchemyAPI, OpenCalais, and Semantria.&nbsp; 
 They each offer similar services in that they will process text, producing a 
 list of entities and relevance of those entities, along with additional 
-information that is unique to each of them, which I'll explore briefly as well.&nbsp; I have a particular interest in using NLP's to acquire the semantic content 
+information that is unique to each provider which I'll explore briefly as well.&nbsp; I have a particular interest in using NLP's to acquire the semantic content 
 from websites (blogs, news feeds, articles, etc.) and began investing three 
 NLP's (AlchemyAPI, OpenCalais, and 
-Semantria) with regards to price and features.&nbsp; For my particular purposes, 
+Semantria) with regards to price and features.&nbsp; You can also read my 
+article on how I use the AlchemyAPI service to parse RSS feeds
+<a href="http://www.codeproject.com/Articles/797457/The-Semantic-Web-and-Natural-Language-Processing">
+here</a>. For my particular purposes, 
 I was interested in a low-document volume service that was hopefully free for 
 limited use and that could provide web page content scraping.&nbsp; As I started 
 investigating these three services, it occurred to me that this might be useful 
@@ -86,28 +88,31 @@ entities to those that are most relevant in the document.&nbsp; Using sentiment
 analysis, one can determine the overall sentiment of an entity in the document, 
 useful for determining the &quot;tone&quot; of the document with regards to an entity -- 
 for example, is the entity &quot;sovereign debt&quot; described negatively, neutrally, or 
-positively in the document?</p>
+positively in the document?&nbsp; NLP's are also capable of extracting higher 
+order concepts and, in the case of OpenCalais, events.</p>
 <p>According to the OpenCalais documentation: <i>&quot;Entity relevance scores are 
 comparable across input texts. This means that you can use entity relevance 
 scores in order to determine entity relevance at a collection level, not just at 
 a document level.&quot; </i>(<a href="http://www.opencalais.com/documentation/calais-web-service-api/api-metadata/entity-relevance-score">http://www.opencalais.com/documentation/calais-web-service-api/api-metadata/entity-relevance-score</a>) 
 If this meaning can be applied to the other providers, it is a useful value for 
 comparing against other documents, but without a definitive meaning of the term 
-&quot;relevance&quot;, I'm not sure what the results of such a comparison actually mean.</p>
+&quot;relevance&quot;, I'm not sure what the results of such a comparison actually mean.&nbsp; 
+To my knowledge, Semantria is the only NLP service that can natively compare 
+documents, which is a feature I do not explore in this article.</p>
 <h3>Entity Extraction</h3>
-<p>Entities are things, often typed, by the NLP, such as people, companies, 
+<p>Entities are things such as people, companies, 
 organizations, cities, geographic features, and so forth.&nbsp; In edition to 
 the extraction of the entity, each service provides additional information about 
 the entity, usually a relevance or sentiment.</p>
 <h4>AlchemyAPI Entity</h4>
 <p>AlchemyAPI's entity has several attributes:</p>
 <ul>
-	<li>Type - the type of entity</li>
-	<li>Relevance - its relevance (whatever that means) on a scale from 0 to 1</li>
-	<li>Count - the number of times the entity occurs in the document</li>
-	<li>Text - the entity name</li>
+	<li>Type</li>
+	<li>Relevance</li>
+	<li>Count </li>
+	<li>Text</li>
 </ul>
-<p>There is definitive description of these attributes.&nbsp; Also, sentiment 
+<p>Also, sentiment 
 analysis is turned off by default, as it incurs an additional transaction count 
 against one's daily/monthly allowance.</p>
 <p>AlchemyAPI also supports the concept of &quot;linked data&quot;.&nbsp; <i>&quot;Linked Data 
@@ -122,14 +127,25 @@ demonstration program.&nbsp; Currently, Alchemy draws on several linked data
 resources (see the link above as well as <a href="http://linkeddata.org/.">
 http://linkeddata.org/</a>.) </p>
 <h4>OpenCalais Entity</h4>
+<p>Note that in this demo, I'm using OpenCalais' &quot;Simple Format&quot; output.&nbsp; According to Ofer Harari:</p>
+<p><i>&quot;Simple Format output which is the poorest format in terms of capabilities 
+(Simple format is for a quick and easy output from Calais. Not for a detailed 
+response). The standard format is RDF or JSON. These outputs include all the 
+metadata that Open Calais can extract.&quot;</i></p>
+<p><i>&quot;The Resource Description Framework (RDF) is a family of World Wide Web 
+Consortium (W3C) specifications [1] originally designed as a metadata data 
+model. It has come to be used as a general method for conceptual description or 
+modeling of information that is implemented in web resources, using a variety of 
+syntax notations and data serialization formats. It is also used in knowledge 
+management applications.&quot;</i> (<a href="http://en.wikipedia.org/wiki/Resource_Description_Framework">http://en.wikipedia.org/wiki/Resource_Description_Framework</a>)
+</p>
+<p>It was being the scope of this article to parse the resulting RDF.</p>
 <p>An OpenCalais entity has several attributes:</p>
 <ul>
-	<li>Value - the entity name</li>
-	<li>Frequency - possibly the count of occurances, though this conflicts 
-	dramatically with AlchemyAPI's &quot;Count&quot;</li>
-	<li>Relevance - its relevance (again, whatever that actually means) on a 
-	scale from 0 to 1</li>
-	<li>Type - the entity type.</li>
+	<li>Value</li>
+	<li>Frequency</li>
+	<li>Relevance</li>
+	<li>Type</li>
 </ul>
 <p>OpenCalais supports linking entities to DBpedia, Wikipedia, Freebase, 
 Reuters.com, GeoNames, Shopping.com, IMDB, LinkedMDB.&nbsp; This feature is not 
@@ -157,13 +173,11 @@ aware that the names of these categories and their attributes is derived from
 the API names.</p>
 <p><u>AlchemyAPI</u></p>
 <ul>
-	<li>Keywords - while stating that AlchemyAPI can extract keywords, the 
-	actual definition of what &quot;keyword&quot; is lacking.<ul>
+	<li>Keywords<ul>
 		<li>attributes of Keywords are Text and Relevance</li>
 	</ul>
 	</li>
-	<li>Concepts - as with Keywords, there is no definition of what a concept 
-	is.<ul>
+	<li>Concepts<ul>
 		<li>attributes of Concepts are Text, Relevance, dbpedia (linked data), 
 		freebase (linked data), and opencyc (linked data.)</li>
 	</ul>
@@ -176,7 +190,7 @@ the API names.</p>
 </ul>
 <p><u>OpenCalais</u></p>
 <ul>
-	<li>Topics (aka facts, as is appears on the web pages.)<ul>
+	<li>Topics<ul>
 		<li>&nbsp;attributes of Topics are Value, Score, and Taxonomy (so far 
 		I've only seen &quot;Calais&quot; for taxonomy.)</li>
 	</ul>
@@ -188,8 +202,7 @@ the API names.</p>
 </ul>
 <p><u>Semantria</u></p>
 <ul>
-	<li>Topics - Themes seem to overall abstractions, such as &quot;Technology&quot;, 
-	&quot;Science&quot;, &quot;Hardware&quot;, &quot;Economics&quot;, etc.<ul>
+	<li>Topics<ul>
 		<li>attributes are Title, Type, Hitcount, StrengthScore, SentimentScore, Label, and 
 		SentimentPolarity</li>
 	</ul>
@@ -226,11 +239,12 @@ processing, web content scraping, and initialization.</p>
 <p>All three providers can work with text documents, however only AlchemyAPI 
 provides web content scraping directly as part of the API.&nbsp; OpenCalais and Semantria are both document-based 
 NLP's and as such require that that the web page scraping has been performed a 
-priori.&nbsp; While AlchemyAPI uses its own web page scraping technology,&nbsp; Semantria tightly integrates with
+priori.&nbsp; While AlchemyAPI uses its own web page scraping technology,&nbsp; Semantria 
+can integrate with
 <a href="http://www.diffbot.com/">Diffbot</a> for this service.&nbsp;For the purposes of this demo 
 (since DiffBot offers only a 7 day limited free trial), I 
 will be using AlchemyAPI's <code>URLGetText</code> API method to provide the 
-scraped content for the OpenCalais and Semantria NLP's.</p>
+scraped content for the OpenCalais and Semantria NLP's.&nbsp; </p>
 <pre>/// &lt;summary&gt;
 /// We use AlchemyAPI to get the page text for OpenCalais and Semantria.
 /// &lt;/summary&gt;
@@ -245,13 +259,39 @@ protected string GetPageText(string url)
 
   return xdoc.SelectSingleNode(&quot;//text&quot;).InnerText;
 }</pre>
-<p>This way at least, the text being handed to each NLP will be the same.&nbsp; If you're not processing content from web pages (blogs, news feeds, articles, 
+<p>To reduce this hits on the AlchemyAPI server, extracting the URL content is 
+cached based on the URL hashcode:</p>
+<pre>/// &lt;summary&gt;
+/// Uses AlchemyAPI to scrape the URL. Also caches the URL, so
+/// we don't hit AlchemyAPI's servers for repeat queries.
+/// &lt;/summary&gt;
+protected string GetUrlText(string url)
+{
+  string urlHash = url.GetHashCode().ToString();
+  string textFilename = urlHash + &quot;.txt&quot;;
+  string pageText;
+
+  if (File.Exists(textFilename))
+  {
+    pageText = File.ReadAllText(textFilename);
+  }
+  else
+  {
+    pageText = GetPageText(url); 
+  }
+
+  File.WriteAllText(textFilename, pageText);
+
+  return pageText;
+}</pre>
+<p>This way, the text being handed to each NLP will be the same.&nbsp; If you're not processing content from web pages (blogs, news feeds, articles, 
 etc.) then this is a moot point with regards to OpenCalais and Semantria.&nbsp; </p>
-<h3>Initialization</h3>
+<h3>Initialization and Limits</h3>
 <p>Initialization of AlchemyAPI and OpenCalais is very simple.&nbsp; One of the 
 issues that you may encounter however is limits to the number of entities (or 
 other items) returned.&nbsp; While OpenCalais does not impose any limits, 
-AlchemyAPI defaults to 50 entities and Semantria defaults to 5.&nbsp; Changing 
+AlchemyAPI defaults to 50 entities (with a maximum I believe of 250) and Semantria defaults to 5 
+(with a maximum of 50).&nbsp; Changing 
 the limit in AlchemyAPI is very simple -- you pass in some additional parameters 
 when requesting the processing:</p>
 <pre>eparams = new AlchemyAPI_EntityParams();
@@ -260,7 +300,7 @@ eparams.setMaxRetrieve(250);</pre>
 have a large number of different configurations that you can choose from 
 depending on the document you want processed.&nbsp; Initialization of these 
 configurations however takes some time to communicate to the server and the get 
-a response back.&nbsp; In the code that I put together, I first request the 
+a response back.&nbsp; In the demo code, I first request the 
 current configurations (there are 8 initially based on language) and then I 
 change the limit (which has a maximum of 50) and then this new configuration 
 must be uploaded.&nbsp; </p>
@@ -279,12 +319,12 @@ must be uploaded.&nbsp; </p>
   }
 }</pre>
 <p>This all takes time and is why the Process button is disabled for so long 
-during application startup.&nbsp; However, once done, the configurations can be 
+at application startup.&nbsp; However, once done, the configurations can be 
 used without further time penalty.&nbsp; It is also interesting to note that the 
 configurations are persisted between sessions -- I assume they are associated 
 with your API key, so once configurations are created, technically I don't need 
 to run this step unless I want to make a change.&nbsp; For this reason, the 
-method IncreaseLimits() in the Initialize method:</p>
+method IncreaseLimits() in the Initialize method can be commented out after you first configure Semantria:</p>
 <pre>public void Initialize()
 {
   string apikey = File.ReadAllText(&quot;semantriaapikey.txt&quot;);
@@ -296,8 +336,8 @@ method IncreaseLimits() in the Initialize method:</p>
 
   IncreaseLimits();     // &lt;---- Comment me out when the limits have been increased after the first-ever run
 }</pre>
-<p>can be commented out after you first configure Semantria.</p>
 <h3>AlchemyAPI</h3>
+<p><img border="0" src="alchemylogo.png" width="459" height="110"></p>
 <p><img border="0" src="alchemy1.png" width="993" height="206"></p>
 <p><a href="http://www.alchemyapi.com/">http://www.alchemyapi.com/</a> </p>
 <p><i>&quot;AlchemyAPI is helping pioneer a computer’s ability to understand human 
@@ -327,10 +367,9 @@ support for additional languages in development.</p>
 AlchemyAPI and then feed this text into all three NLP's.&nbsp; It should be 
 noted that this produces worse timing for AlchemyAPI than if I had provided the 
 web page URL directly -- meaning that if you give AlchemyAPI the URL, it 
-performs better, and in many cases, significantly better than the other two. 
-It's unfortunate that I have to dumb-down AlchemyAPI to equalize the timing 
-tests with the other two NLP providers.</p>
+performs better, and in many cases, significantly better than the other two.</p>
 <h3>OpenCalais</h3>
+<p><img border="0" src="opencalaislogo.png" width="258" height="120"></p>
 <p><img border="0" src="opencalais1.png" width="988" height="202"></p>
 <p><a href="http://www.opencalais.com/">http://www.opencalais.com/</a> </p>
 <p><i>&quot;We want to make all the world's content more accessible, interoperable 
@@ -340,7 +379,9 @@ toolkit of capabilities that allow you to readily incorporate state-of-the-art
 semantic functionality within your blog, content management system, website or 
 application.&quot;</i></p>
 <p>OpenCalais supports English, French and Spanish.</p>
+<p>OpenCalais </p>
 <h3>Semantria</h3>
+<p><img border="0" src="semantrialogo.png" width="424" height="120"></p>
 <p><img border="0" src="semantria1.png" width="962" height="191"></p>
 <p><a href="https://semantria.com/">https://semantria.com/</a> </p>
 <p><i>&quot;Semantria applies Text and Sentiment Analysis to tweets, facebook posts, 
@@ -375,8 +416,8 @@ Diffbot</a> for webpage scraping.</p>
 processed daily/monthly and level of customer support.</p>
 <h3>AlchemyAPI</h3>
 <p>The pricing that I describe here may not be up on the AlchemyAPI website at 
-the time of this writing, as I was notified that the pricing structure has 
-changed somewhat.</p>
+the time of this writing, as I was notified directly that the pricing structure 
+was being changed.</p>
 <p>There are five tiers:</p>
 <ol>
 	<li>Free: 1,000 transactions / day, supporting five concurrent requests, no 
@@ -439,8 +480,10 @@ API's provided examples and various degrees of unit tests.</p>
 <h3>AlchemyAPI</h3>
 <p>The AlchemyAPI, to put it simply, just worked.&nbsp; It provided the 
 functionality that I was looking for (give it a URL and it returns semantic 
-results) and it worked without any issues, which is something I cannot say for 
-OpenCalais or Semantria.&nbsp; Interfacing with the .NET API that they provide 
+results) and it worked without any issues, which was not my experience with OpenCalais or Semantria, 
+though in hindsight, my issues with Semantria were more related to not fully 
+understanding the document queuing model that Semantria uses.&nbsp; Interfacing with the .NET API that 
+AlchemyAPI provides 
 is quite simple, for example:</p>
 <pre>protected AlchemyAPI.AlchemyAPI alchemyObj;
 
@@ -450,11 +493,7 @@ public void Initialize()
   alchemyObj.LoadAPIKey(&quot;alchemyapikey.txt&quot;);
 }
 
-public string GetUrlText(string url)
-{
-  return alchemyObj.URLGetText(url);
-}
-
+// Process a URL directly.
 public DataSet LoadEntitiesFromUrl(string url)
 {
   DataSet dsEntities = new DataSet();
@@ -467,10 +506,34 @@ public DataSet LoadEntitiesFromUrl(string url)
 
   return dsEntities;
 }</pre>
-<p>Unlike OpenCalais and Semantra, I had no issues interfacing with the .NET API 
-library &quot;out of the box.&quot;</p>
-<p>Also, unlike OpenCalais and Semantra, AlchemyAPI returns an XML document 
-rather than data mapped to library classes.</p>
+<p>AlchemyAPI returns an XML document 
+that is well suited for loading directly into a <code>DataSet</code>, as seen by 
+the above code.</p>
+<p>One issue I encountered with the .NET AlchemyAPI was that a useful exception 
+message was not being returned, so I modified it slightly to return the message 
+from the server as part of the exception:</p>
+<pre>if (status.InnerText != &quot;OK&quot;)
+{
+  string errorMessage = &quot;Error making API call.&quot;;
+
+  try
+  {
+    XmlNode statusInfo = root.SelectSingleNode(&quot;/results/statusInfo&quot;);
+    errorMessage = statusInfo.InnerText;
+  }
+  catch
+  {
+    // some problem with the statusInfo. Return the generic message.
+  }
+
+  System.ApplicationException ex = new System.ApplicationException (errorMessage);
+
+  throw ex;
+}</pre>
+<p>This change has been folded into the
+<a href="https://github.com/AlchemyAPI/alchemyapi_csharp">C# AlchemyAPI hosted 
+on GitHub</a>.</p>
+<p>AlchemyAPI's content size limits are 150KB of cleaned text and 600KB of HTML.</p>
 <h3>OpenCalais</h3>
 <p>The <a href="http://opencalais.codeplex.com/">Open Calais .NET library</a> on 
 Codeplex was the most difficult of the three libraries to work with, requiring me to fix 
@@ -512,14 +575,14 @@ type change.</p>
 <p>I also found it annoying that the properties for Entities, Topics, and Events are 
 IEnumerable's, meaning you have to explicitly iterate through the collection to 
 acquire the contents, which, underlying, involves some processing of the XML document.&nbsp; This 
-is very inefficient, especially if the collection is iterated over many times by 
+seems inefficient, especially if the collection is iterated over many times by 
 different functions, 
 but can be worked around by converting the collections to lists, as I did in the 
 simple &quot;get&quot; functions, for example:</p>
 <pre>return document.Entities.ToList();</pre>
 <p>Given that the contents of these collections is unchanging, I see no reason 
 not to pre-populate the collections with their items.</p>
-<p>My other significant issue with OpenCalais is that my sample document (the 
+<p>My other issue with OpenCalais is that my sample document (the 
 text of Wikipedia's page on Computer Science) resulted in a &quot;content is not 
 valid&quot; exception from the server.&nbsp; It turns out that the offending sentence 
 is this:</p>
@@ -567,16 +630,16 @@ According to Ofer Harari:</p>
 response). The standard format is RDF or JSON. These outputs include all the 
 metadata that Open Calais can extract.&quot;</i></p>
 <h3>Semantria</h3>
-<p>For some reason I found Semantria's .NET API to be complicated to work with, 
-which I realized after having success with it is that it takes a different 
+<p>I originally found Semantria's .NET API to be complicated to work with, 
+which I realized after having success with it was that it takes a different 
 approach to processing documents.&nbsp; With AlchemyAPI and OpenCalais, you make 
-the call and wait for the results.&nbsp; With Semantria, it is very bulk-process 
+the call and wait for the results.&nbsp; With Semantria, it is very bulk-document 
 centric.&nbsp; Documents that are sent to the Semantria servers are queued and 
 can return asynchronously with results or in a different order from the original 
 input into the queue.&nbsp; This makes working with a single document more 
 complex (see code below) but clearly, the strength of Semantria's API is much 
 more evident when working with bulk documents. </p>
-<p>There is also two modes of document analysis, described here:
+<p>There are also two modes of document analysis, described here:
 <a href="https://semantria.com/support/developer/overview/processing">
 https://semantria.com/support/developer/overview/processing</a> </p>
 <ol>
@@ -595,7 +658,9 @@ for all the documents in the collection.&quot;</i></p>
 <p>This article reviews Detailed Mode only, however, when working with Discovery 
 Mode I &quot;discovered&quot; an issue with document size--with my scraped 
 webpage content string, I was getting 
-&quot;line too long&quot; exceptions.</p>
+&quot;line too long&quot; exceptions.&nbsp; It seems that Discovery Mode is 
+intended to work with smaller datasets, such as paragraphs or single sentences.&nbsp; 
+I am not sure what the line limit is when in Discovery Mode.</p>
 <p>Calling the parser requires polling to see if the document is analyzed.&nbsp; 
 While there is a DocsAutoResponse event callback, this isn't what it seems -- if 
 the document is queued (which is the standard behavior) this callback is never 
@@ -633,9 +698,7 @@ bulk processing.&nbsp; Here is the parse request and response poll code:</p>
 }</pre>
 <p>As stated at the beginning of this article under Initialization, the default 
 number of entities is 5 (themes is also 5 and topics is 10).&nbsp; In this 
-article I have increased the limit to 50 (though there was some confusion as to 
-whether the absolute limit was 20, as one can see from running the program, that 
-is not the case.)</p>
+article I have increased the limit to 50, which is the maximum.</p>
 <h2>A Sample Run</h2>
 <p>The screenshots that I've been using come from parsing this page:
 <a href="http://en.wikipedia.org/wiki/Computer_science">
@@ -692,34 +755,463 @@ protected async void Process(object sender, EventArgs args)
   ReportTimes(alchemyTime, calaisTime, semantriaTime);
   btnProcess.Enabled = true;
 }</pre>
-<p>This way, the UI remains responsive and you can interact with it while other 
+<p>Using .NET's <code>Task.Run</code> allows the to UI remain responsive so you can interact with it while other 
 results are still coming in.</p>
+<h2>A Second Example</h2>
+<p>I decided to throw something more interesting at these providers--Rudolf 
+Steiner's Chapter 3 &quot;Culture, Law, and Economics&quot; of his lecture series
+<a href="http://wn.rsarchive.org/Books/GA024/English/AP1985/GA024_a03.html">The 
+Renewal of the Social Organism</a>.&nbsp; The results are interesting and reveal 
+the differences between the three NLP's.&nbsp; Keep in mind that I'm using the 
+Simple Format with OpenCalais and so the results may not represent its full 
+semantic processing capability.&nbsp; It was being the scope of this article to 
+parse the resulting RDF.</p>
+<p><img border="0" src="proctime2.png" width="242" height="184"></p>
+<h3>Resulting Entities</h3>
+<h4>AlchemyAPI Entities</h4>
+<table>
+	<thead>
+		<tr>
+			<th>type</th>
+			<th>relevance</th>
+			<th>count</th>
+			<th>text</th>
+		</tr>
+	</thead>
+	<tr>
+		<td>PrintMedia</td>
+		<td>0.734508</td>
+		<td>1</td>
+		<td>Law and Economics</td>
+	</tr>
+	<tr>
+		<td>Crime</td>
+		<td>0.684892</td>
+		<td>1</td>
+		<td>monopolization</td>
+	</tr>
+	<tr>
+		<td>JobTitle</td>
+		<td>0.635413</td>
+		<td>1</td>
+		<td>business manager</td>
+	</tr>
+	<tr>
+		<td>Facility</td>
+		<td>0.61222</td>
+		<td>1</td>
+		<td>St. Simon</td>
+	</tr>
+	<tr>
+		<td>JobTitle</td>
+		<td>0.606995</td>
+		<td>1</td>
+		<td>official</td>
+	</tr>
+	<tr>
+		<td>Person</td>
+		<td>0.602684</td>
+		<td>1</td>
+		<td>Marx</td>
+	</tr>
+	<tr>
+		<td>Person</td>
+		<td>0.581026</td>
+		<td>1</td>
+		<td>Fourier</td>
+	</tr>
+</table>
+<h4>OpenCalais Entities</h4>
+<p>(No topics or events were returned)</p>
+<table>
+	<thead>
+		<tr>
+			<th>Value</th>
+			<th>Frequency</th>
+			<th>Relevance</th>
+			<th>Type</th>
+		</tr>
+	</thead>
+	<tr>
+		<td>natural law</td>
+		<td>2</td>
+		<td>0.286</td>
+		<td>IndustryTerm</td>
+	</tr>
+	<tr>
+		<td>devise external systems</td>
+		<td>1</td>
+		<td>0.251</td>
+		<td>IndustryTerm</td>
+	</tr>
+	<tr>
+		<td>economic services</td>
+		<td>1</td>
+		<td>0.318</td>
+		<td>IndustryTerm</td>
+	</tr>
+	<tr>
+		<td>manager</td>
+		<td>1</td>
+		<td>0.314</td>
+		<td>Position</td>
+	</tr>
+	<tr>
+		<td>government official</td>
+		<td>1</td>
+		<td>0.239</td>
+		<td>Position</td>
+	</tr>
+	<tr>
+		<td>business manager</td>
+		<td>1</td>
+		<td>0.314</td>
+		<td>Position</td>
+	</tr>
+	<tr>
+		<td>shopkeeper</td>
+		<td>1</td>
+		<td>0.239</td>
+		<td>Position</td>
+	</tr>
+</table>
+<h4>Semantria Entities</h4>
+<table>
+	<thead>
+		<tr>
+			<th>Type</th>
+			<th>Evidence</th>
+			<th>Confident</th>
+			<th>IsAbout</th>
+			<th>EntityType</th>
+			<th width="216">Title</th>
+			<th>Label</th>
+			<th>SentimentScore</th>
+			<th>SentimentPolarity</th>
+		</tr>
+	</thead>
+	<tr>
+		<td>named</td>
+		<td>7</td>
+		<td>True</td>
+		<td>False</td>
+		<td>Job Title</td>
+		<td width="216">manager</td>
+		<td>Job Title</td>
+		<td>0.171760261</td>
+		<td>neutral</td>
+	</tr>
+	<tr>
+		<td>named</td>
+		<td>4</td>
+		<td>True</td>
+		<td>False</td>
+		<td>Person</td>
+		<td width="216">Marx</td>
+		<td>Person</td>
+		<td>0.294535</td>
+		<td>neutral</td>
+	</tr>
+	<tr>
+		<td>named</td>
+		<td>2</td>
+		<td>True</td>
+		<td>False</td>
+		<td>Quote</td>
+		<td width="216">“It is impossible to bring about satisfactory conditions 
+		through this organic formation of society. It can be done only through a 
+		suitable economic organization.”</td>
+		<td>Quote</td>
+		<td>0.218072414</td>
+		<td>neutral</td>
+	</tr>
+	<tr>
+		<td>named</td>
+		<td>1</td>
+		<td>True</td>
+		<td>False</td>
+		<td>Quote</td>
+		<td width="216">“social question”</td>
+		<td>Quote</td>
+		<td>0</td>
+		<td>neutral</td>
+	</tr>
+	<tr>
+		<td>named</td>
+		<td>1</td>
+		<td>True</td>
+		<td>False</td>
+		<td>Quote</td>
+		<td width="216">“simplicity”</td>
+		<td>Quote</td>
+		<td>0.49</td>
+		<td>neutral</td>
+	</tr>
+	<tr>
+		<td>named</td>
+		<td>1</td>
+		<td>True</td>
+		<td>False</td>
+		<td>Quote</td>
+		<td width="216">“self-evident fact”</td>
+		<td>Quote</td>
+		<td>0</td>
+		<td>neutral</td>
+	</tr>
+	<tr>
+		<td>named</td>
+		<td>1</td>
+		<td>True</td>
+		<td>False</td>
+		<td>Quote</td>
+		<td width="216">“social question”</td>
+		<td>Quote</td>
+		<td>0</td>
+		<td>neutral</td>
+	</tr>
+</table>
+<h3>AlchemyAPI Concepts</h3>
+<table>
+	<thead>
+		<tr>
+			<th>text</th>
+			<th>relevance</th>
+			<th>dbpedia</th>
+			<th>freebase</th>
+			<th>opencyc</th>
+		</tr>
+	</thead>
+	<tr>
+		<td>Sociology</td>
+		<td>0.965445</td>
+		<td>http://dbpedia.org/resource/Sociology</td>
+		<td>http://rdf.freebase.com/ns/m.06ms6</td>
+		<td>http://sw.opencyc.org/concept/Mx4rvVvb3pwpEbGdrcN5Y29ycA</td>
+	</tr>
+	<tr>
+		<td>Law</td>
+		<td>0.445281</td>
+		<td>http://dbpedia.org/resource/Law</td>
+		<td>http://rdf.freebase.com/ns/m.04gb7</td>
+		<td>http://sw.opencyc.org/concept/Mx4rvV1TLJwpEbGdrcN5Y29ycA</td>
+	</tr>
+	<tr>
+		<td>Economy</td>
+		<td>0.40107</td>
+		<td>http://dbpedia.org/resource/Economy</td>
+		<td>http://rdf.freebase.com/ns/m.0gfps3</td>
+		<td>&nbsp;</td>
+	</tr>
+	<tr>
+		<td>Economics</td>
+		<td>0.391207</td>
+		<td>http://dbpedia.org/resource/Economics</td>
+		<td>http://rdf.freebase.com/ns/m.02j62</td>
+		<td>http://sw.opencyc.org/concept/Mx4rvqlEOpwpEbGdrcN5Y29ycA</td>
+	</tr>
+	<tr>
+		<td>Human</td>
+		<td>0.36315</td>
+		<td>http://dbpedia.org/resource/Human</td>
+		<td>http://rdf.freebase.com/ns/m.0dgw9r</td>
+		<td>http://sw.opencyc.org/concept/Mx4rIcwFloGUQdeMlsOWYLFB2w</td>
+	</tr>
+	<tr>
+		<td>Religion</td>
+		<td>0.353719</td>
+		<td>http://dbpedia.org/resource/Religion</td>
+		<td>http://rdf.freebase.com/ns/m.06bvp</td>
+		<td>http://sw.opencyc.org/concept/Mx4rvVkCHZwpEbGdrcN5Y29ycA</td>
+	</tr>
+	<tr>
+		<td>Spirituality</td>
+		<td>0.344812</td>
+		<td>http://dbpedia.org/resource/Spirituality</td>
+		<td>http://rdf.freebase.com/ns/m.070wm</td>
+		<td>&nbsp;</td>
+	</tr>
+	<tr>
+		<td>Communism</td>
+		<td>0.280482</td>
+		<td>http://dbpedia.org/resource/Communism</td>
+		<td>http://rdf.freebase.com/ns/m.01m59</td>
+		<td>http://sw.opencyc.org/concept/Mx4rvVi0EZwpEbGdrcN5Y29ycA</td>
+	</tr>
+</table>
+<h3>AlchemyAPI Keywords</h3>
+<p>(I'm only showing the first 10 of the 250 keywords returned.)</p>
+<table>
+	<tr>
+		<td>life</td>
+		<td>0.926948</td>
+	</tr>
+	<tr>
+		<td>cultural life</td>
+		<td>0.884749</td>
+	</tr>
+	<tr>
+		<td>economic life</td>
+		<td>0.766198</td>
+	</tr>
+	<tr>
+		<td>economic power</td>
+		<td>0.720022</td>
+	</tr>
+	<tr>
+		<td>free cultural life</td>
+		<td>0.717939</td>
+	</tr>
+	<tr>
+		<td>practical life</td>
+		<td>0.669134</td>
+	</tr>
+	<tr>
+		<td>modern social movement</td>
+		<td>0.668291</td>
+	</tr>
+	<tr>
+		<td>spiritual life</td>
+		<td>0.654856</td>
+	</tr>
+	<tr>
+		<td>nature</td>
+		<td>0.638823</td>
+	</tr>
+	<tr>
+		<td>individual wills</td>
+		<td>0.635454</td>
+	</tr>
+</table>
+<p>..etc..</p>
+<h3>Semantria Topics</h3>
+<table>
+	<thead>
+		<tr>
+			<th>Title</th>
+			<th>Type</th>
+			<th>Hitcount</th>
+			<th>StrengthScore</th>
+			<th>SentimentScore</th>
+			<th>SentimentPolarity</th>
+			<th>Label</th>
+		</tr>
+	</thead>
+	<tr>
+		<td>Science</td>
+		<td>concept</td>
+		<td>0</td>
+		<td>0.78942883</td>
+		<td>0.121833332</td>
+		<td>neutral</td>
+		<td>&nbsp;</td>
+	</tr>
+	<tr>
+		<td>Economics</td>
+		<td>concept</td>
+		<td>0</td>
+		<td>0.748247862</td>
+		<td>0.414984226</td>
+		<td>neutral</td>
+		<td>&nbsp;</td>
+	</tr>
+	<tr>
+		<td>Law</td>
+		<td>concept</td>
+		<td>0</td>
+		<td>0.7397579</td>
+		<td>0.356725723</td>
+		<td>neutral</td>
+		<td>&nbsp;</td>
+	</tr>
+	<tr>
+		<td>Education</td>
+		<td>concept</td>
+		<td>0</td>
+		<td>0.494773239</td>
+		<td>0.351259947</td>
+		<td>neutral</td>
+		<td>&nbsp;</td>
+	</tr>
+	<tr>
+		<td>Science</td>
+		<td>query</td>
+		<td>3</td>
+		<td>0</td>
+		<td>0.750133157</td>
+		<td>positive</td>
+		<td>&nbsp;</td>
+	</tr>
+</table>
+<h3>Semantria Themes</h3>
+<table>
+	<thead>
+		<tr>
+			<th>Evidence</th>
+			<th>IsAbout</th>
+			<th>StrengthScore</th>
+			<th>SentimentScore</th>
+			<th>SentimentPolarity</th>
+			<th>Title</th>
+		</tr>
+	</thead>
+	<tr>
+		<td>7</td>
+		<td>True</td>
+		<td>2.95010757</td>
+		<td>0.7593447</td>
+		<td>positive</td>
+		<td>individual persons</td>
+	</tr>
+	<tr>
+		<td>7</td>
+		<td>False</td>
+		<td>2.93402934</td>
+		<td>7.267939</td>
+		<td>positive</td>
+		<td>economic life</td>
+	</tr>
+	<tr>
+		<td>7</td>
+		<td>True</td>
+		<td>2.7541132</td>
+		<td>-13.2000027</td>
+		<td>negative</td>
+		<td>evils — evils</td>
+	</tr>
+	<tr>
+		<td>7</td>
+		<td>True</td>
+		<td>2.544567</td>
+		<td>6.680146</td>
+		<td>positive</td>
+		<td>Socialist thinkers</td>
+	</tr>
+	<tr>
+		<td>7</td>
+		<td>True</td>
+		<td>2.48574352</td>
+		<td>9.6</td>
+		<td>positive</td>
+		<td>wide range</td>
+	</tr>
+</table>
 <h2>Conclusions</h2>
 <p>The testing here is not exhaustive--some may argue not even comprehensive.&nbsp; 
-I am not testing high throughputs.&nbsp; I also haven't simulated customer service 
+I am not testing high throughputs and haven't simulated customer service 
 issues.&nbsp; All three providers replied very quickly when I emailed them that 
 I was writing this article, and I've had excellent and helpful conversations 
-with all of them.</p>
+with all of them.&nbsp; After working with each provider, I realized that they 
+each would deserve a &quot;deep dive&quot; article on their own.&nbsp; Even this 
+high-level review has taken a considerable amount of time and I have glossed 
+over (or outright skipped) many of the features of these providers.&nbsp; </p>
+<p>I strongly suggest that you invest each provider in detail yourself to see 
+what additional features and capabilities exist.&nbsp; Especially with regards 
+to OpenCalais, I would strongly suggest that anyone interested in using this 
+service further investigate the RDF output.</p>
 <p>Also, as a general criticism, each provider would do well to explicitly 
 define what the various terms mean in their API's and the collection attributes.&nbsp; 
 If one is to use these services for serious analysis of documents, an exact 
 meaning is a requirement.</p>
-<p>While I had originally set out with the goal of not drawing any conclusions 
-about the three providers and rather to simply present my findings, I have 
-definitely become biased towards AlchemyAPI based on price and features.&nbsp; 
-It is ironic that I'm using AlchemyAPI's web page content extraction to feed the 
-scraped page text into OpenCalais and Semantria.&nbsp; On the other hand, 
-Semantria returns some interesting attributes (many of which I will admit I 
-don't fully understand) that could be useful inputs to further analysis, 
-categorization, and meaning extraction.&nbsp; If only it supported a free 
-version for us poor folk with limited analysis requirements, but that's a 
-personal bias.</p>
-<p>Lastly, I feel as though I owe an apology to the reader -- this review has 
-taken a considerable amount of time and I have glossed over (or outright 
-skipped) many of the features of these providers.&nbsp; While this article 
-hopefully provides some useful information, I strongly suggest that you invest 
-each provider in detail yourself to see what additional features and 
-capabilities exist.</p>
 
 </body>
 

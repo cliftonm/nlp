@@ -42,7 +42,7 @@ namespace NlpComparison
 			consumerSecret = keys[1].Trim();
 			serializer = new JsonSerializer();
 			session = Session.CreateSession(consumerKey, consumerSecret, serializer);
-			IncreaseLimits();
+			// IncreaseLimits();
 		}
 
 		public void ParseUrl(string content)
